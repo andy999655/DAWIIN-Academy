@@ -1,3 +1,4 @@
+<meta charset="utf-8">
 <title>닉 워커 트레이닝 해부</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -10,6 +11,7 @@
   --rule:#D3D7DC; --rule-2:#C2C7CE;
   --accent:#C8102E; --accent-ink:#C8102E; --accent-soft:#FAE8EB;
   --blue:#1B4F9C; --amber:#C77A0A;
+  --ev1:#A8C2E6; --ev2:#5C89C8; --ev3:#1B4F9C;
   --shadow:0 1px 2px rgba(21,24,29,.06), 0 8px 24px -16px rgba(21,24,29,.28);
 }
 @media (prefers-color-scheme: dark){
@@ -19,6 +21,7 @@
     --rule:#2C313A; --rule-2:#3A414B;
     --accent:#E8455F; --accent-ink:#F07487; --accent-soft:#33181D;
     --blue:#5B93E0; --amber:#B87E22;
+    --ev1:#2E4A73; --ev2:#416FB0; --ev3:#5B93E0;
     --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 28px -18px rgba(0,0,0,.9);
   }
 }
@@ -28,6 +31,7 @@
   --rule:#2C313A; --rule-2:#3A414B;
   --accent:#E8455F; --accent-ink:#F07487; --accent-soft:#33181D;
   --blue:#5B93E0; --amber:#B87E22;
+  --ev1:#2E4A73; --ev2:#416FB0; --ev3:#5B93E0;
   --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 28px -18px rgba(0,0,0,.9);
 }
 
@@ -194,6 +198,80 @@ ul.ex .rx{
   border-radius:4px; padding:2px 6px;
 }
 
+/* ---------- evidence / method table ---------- */
+.myth{
+  background:var(--surface); border:1px solid var(--rule); border-left:3px solid var(--blue);
+  border-radius:6px; padding:18px 20px; margin-bottom:22px;
+}
+.myth h3{margin:0 0 8px}
+.myth p{font-size:.92rem}
+.chain{
+  display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-top:14px;
+  font-size:.82rem;
+}
+.chain .node{
+  background:var(--surface-2); border:1px solid var(--rule); border-radius:5px;
+  padding:5px 10px; color:var(--ink-2);
+}
+.chain .node.cause{border-color:var(--blue); color:var(--ink); font-weight:600}
+.chain .node.sign{border-style:dashed; color:var(--ink-3)}
+.chain .arrow{color:var(--ink-3); font-family:'IBM Plex Mono',monospace}
+
+.methods{display:flex; flex-direction:column; gap:12px}
+.method{
+  background:var(--surface); border:1px solid var(--rule); border-radius:8px;
+  padding:16px 18px; display:grid; grid-template-columns:auto 1fr; gap:4px 14px;
+  align-items:start;
+}
+.method .rank{
+  font-family:'Oswald','IBM Plex Sans KR',sans-serif; font-weight:700; font-size:1.35rem;
+  color:var(--ink-3); line-height:1.1; grid-row:span 2; min-width:1.4em;
+  font-variant-numeric:tabular-nums;
+}
+.method .top{display:flex; flex-wrap:wrap; align-items:center; gap:8px 12px}
+.method h3{font-size:1rem}
+.method .en{font-size:.78rem; color:var(--ink-3); font-family:'IBM Plex Mono',monospace}
+.method p{font-size:.9rem; margin:6px 0 0; max-width:none}
+.method .howto{
+  font-size:.86rem; color:var(--ink-2); background:var(--surface-2);
+  border:1px solid var(--rule); border-radius:6px; padding:9px 12px; margin-top:10px;
+}
+.method .howto b{color:var(--ink)}
+
+/* ordinal evidence meter: one hue, light -> dark, always paired with a text label */
+.ev{display:inline-flex; align-items:center; gap:7px; margin-left:auto; white-space:nowrap}
+.ev .pips{display:inline-flex; gap:2px}
+.ev .pip{width:15px; height:7px; border-radius:2px; background:var(--sunk); border:1px solid var(--rule)}
+.ev.s3 .pip:nth-child(1){background:var(--ev1); border-color:var(--ev1)}
+.ev.s3 .pip:nth-child(2){background:var(--ev2); border-color:var(--ev2)}
+.ev.s3 .pip:nth-child(3){background:var(--ev3); border-color:var(--ev3)}
+.ev.s2 .pip:nth-child(1){background:var(--ev1); border-color:var(--ev1)}
+.ev.s2 .pip:nth-child(2){background:var(--ev2); border-color:var(--ev2)}
+.ev.s1 .pip:nth-child(1){background:var(--ev1); border-color:var(--ev1)}
+.ev .lab{
+  font-family:'Oswald','IBM Plex Sans KR',sans-serif; font-size:.7rem; font-weight:600;
+  letter-spacing:.1em; text-transform:uppercase; color:var(--ink-3);
+}
+.ev-key{
+  display:flex; flex-wrap:wrap; gap:16px; margin-bottom:18px; font-size:.8rem; color:var(--ink-3);
+  align-items:center;
+}
+
+.recipe{background:var(--surface); border:1px solid var(--rule); border-radius:8px; padding:18px; margin-top:20px}
+.recipe ol{margin:14px 0 0; padding-left:0; list-style:none; counter-reset:step}
+.recipe li{
+  counter-increment:step; position:relative; padding-left:34px; margin-bottom:12px;
+  font-size:.9rem; color:var(--ink-2);
+}
+.recipe li:last-child{margin-bottom:0}
+.recipe li::before{
+  content:counter(step); position:absolute; left:0; top:1px;
+  width:22px; height:22px; border-radius:50%; background:var(--accent); color:#fff;
+  font-family:'Oswald','IBM Plex Sans KR',sans-serif; font-size:.78rem; font-weight:600;
+  display:flex; align-items:center; justify-content:center;
+}
+.recipe li b{color:var(--ink)}
+
 /* ---------- macro chart ---------- */
 .diet{display:grid; grid-template-columns:1fr; gap:18px}
 .chart{background:var(--surface); border:1px solid var(--rule); border-radius:8px; padding:20px 18px}
@@ -267,7 +345,7 @@ ul.ex .rx{
 <header class="hero">
   <span class="kicker">IFBB Pro · Men's Open</span>
   <h1>닉 워커 트레이닝 해부</h1>
-  <p class="tagline">유튜브 채널 <strong>@NickWalker39</strong>에 올라온 풀 트레이닝 세션과 인터뷰를 훑어, “더 뮤턴트”가 실제로 쓰는 분할·세트 구조·부위별 종목·식단을 한 장으로 정리했습니다. 2026년 9월 기준 최신 내용입니다.</p>
+  <p class="tagline">유튜브 채널 <strong>@NickWalker39</strong>에 올라온 풀 트레이닝 세션과 인터뷰를 훑어, “더 뮤턴트”가 실제로 쓰는 분할·세트 구조·부위별 종목·식단을 한 장으로 정리했습니다. 여기에 그 기법들이 왜 통하는지 <strong>2025~2026 연구 근거</strong>를 덧붙였습니다. 2026년 9월 기준입니다.</p>
 
   <dl class="stats">
     <div class="stat"><dt>Height</dt><dd class="num">170<span> cm</span></dd></div>
@@ -497,10 +575,148 @@ ul.ex .rx{
   </div>
 </section>
 
-<!-- 5. 식단 -->
+<!-- 5. 고립 · 펌핑 -->
 <section>
   <div class="sec-head">
-    <p class="eyebrow">05 — Fuel</p>
+    <p class="eyebrow">05 — Isolation &amp; Pump</p>
+    <h2>고립과 펌핑을 더 효과적으로 만드는 법</h2>
+    <p>닉 워커가 쓰는 기법들이 <strong>왜 통하는지</strong>를 2025~2026년 최신 연구 기준으로 정리했습니다. 근거가 강한 것부터 순서대로 놓았습니다.</p>
+  </div>
+
+  <div class="myth">
+    <h3>먼저 정리할 오해 — 펌핑은 원인이 아니라 지표다</h3>
+    <p>최근 리뷰들은 일관되게 <strong>기계적 장력(mechanical tension)이 근비대의 1차 동인</strong>이라고 봅니다. 대사산물 축적과 세포 팽창, 즉 우리가 “펌핑”이라 부르는 것은 인과 근거가 약하고 기여도도 간접적이라는 게 현재 결론입니다.</p>
+    <p>그런데도 펌핑을 쫓는 게 완전히 헛되지 않은 이유는, <strong>펌핑이 잘 오는 조건과 장력을 오래 유지하는 조건이 겹치기 때문</strong>입니다. 지속 장력 · 실패 근접 · 짧은 휴식 · 고립 자세 — 이것들이 장력을 만들고, 그 부산물로 펌핑이 옵니다. 펌핑을 목표로 삼지 말고, <em>장력이 제대로 걸렸다는 신호</em>로 읽으세요.</p>
+    <div class="chain">
+      <span class="node cause">기계적 장력</span>
+      <span class="arrow">→</span>
+      <span class="node">근비대</span>
+      <span class="arrow" style="margin-left:6px">/</span>
+      <span class="node cause">장력 유지 조건</span>
+      <span class="arrow">→</span>
+      <span class="node sign">펌핑 (신호일 뿐)</span>
+    </div>
+  </div>
+
+  <div class="ev-key">
+    <span><strong style="color:var(--ink)">근거 강도</strong> — 무작위 대조군 연구·메타분석 기준</span>
+    <span><span class="ev s3"><span class="pips"><span class="pip"></span><span class="pip"></span><span class="pip"></span></span><span class="lab">강</span></span></span>
+    <span><span class="ev s2"><span class="pips"><span class="pip"></span><span class="pip"></span><span class="pip"></span></span><span class="lab">중</span></span></span>
+    <span><span class="ev s1"><span class="pips"><span class="pip"></span><span class="pip"></span><span class="pip"></span></span><span class="lab">약</span></span></span>
+  </div>
+
+  <div class="methods">
+
+    <article class="method">
+      <div class="rank">01</div>
+      <div class="top">
+        <h3>늘어난 구간 편향</h3>
+        <span class="en">Lengthened partials</span>
+        <span class="ev s3"><span class="pips"><span class="pip"></span><span class="pip"></span><span class="pip"></span></span><span class="lab">강</span></span>
+      </div>
+      <div>
+        <p>근육이 <strong>늘어난 상태에서 수축</strong>할 때 개별 섬유가 받는 장력이 가장 큽니다. 2025년 Wolf 등의 8주 상체 연구에서 늘어난 구간 부분반복은 전 가동범위와 <strong>동등한</strong> 성장을 냈고, 15개 기관 다중 검증 연구도 같은 결론에 도달했습니다. 일부 체계적 고찰은 긴 근육 길이 훈련이 더 유리하다고 보지만 아직 혼재합니다.</p>
+        <p class="howto"><b>실전 —</b> 전 가동범위를 기본으로 두고, <b>마지막 세트가 실패한 뒤 늘어난 구간에서만 부분반복</b>을 더 붙입니다. 인클라인 덤벨 컬, 오버헤드 트라이셉스 익스텐션, 시티드 레그컬, 몸 앞으로 크로스한 케이블 래터럴이 대표적입니다. 전 가동범위를 통째로 대체하지는 마세요.</p>
+      </div>
+    </article>
+
+    <article class="method">
+      <div class="rank">02</div>
+      <div class="top">
+        <h3>저항 프로파일 맞추기</h3>
+        <span class="en">Resistance profile · cable &amp; machine</span>
+        <span class="ev s2"><span class="pips"><span class="pip"></span><span class="pip"></span><span class="pip"></span></span><span class="lab">중</span></span>
+      </div>
+      <div>
+        <p>프리웨이트는 중력 방향이 고정이라 관절 각도에 따라 장력이 사라지는 구간이 생깁니다. 케이블·머신은 늘어난 구간부터 수축 구간까지 <strong>장력이 끊기지 않습니다</strong>. 볼륨과 강도를 맞추면 전체 성장은 대등하지만, 고립 종목에서는 케이블 쪽이 유리합니다.</p>
+        <p class="howto"><b>실전 —</b> 래터럴 레이즈 · 리어델트 · 플라이처럼 <b>중력이 자극을 깎아먹는 종목</b>은 케이블로. 닉 워커가 부상 이후 머신으로 옮긴 선택이 정확히 이 원리 위에 있습니다. 다만 도구를 섞을수록 자극 각도가 다양해져 발달이 고릅니다.</p>
+      </div>
+    </article>
+
+    <article class="method">
+      <div class="rank">03</div>
+      <div class="top">
+        <h3>혈류제한 훈련</h3>
+        <span class="en">BFR · Blood Flow Restriction</span>
+        <span class="ev s3"><span class="pips"><span class="pip"></span><span class="pip"></span><span class="pip"></span></span><span class="lab">강</span></span>
+      </div>
+      <div>
+        <p>1RM의 <strong>20~30% 저부하</strong>로도 고부하(&gt;70% 1RM) 훈련과 대등한 비대를 냅니다. 메타분석에서 일관되게 저부하 단독보다 확실히 우위입니다. 국소 저산소 환경이 대사산물을 쌓고 속근 섬유 동원을 끌어올리는 것이 기전으로 설명됩니다.</p>
+        <p class="howto"><b>실전 —</b> 사지 근위부에 커프를 감고 <b>110~240 mmHg</b> 범위. 다만 고정 압력은 사람마다 자극 편차가 커서, 최근 연구는 개인별 <b>동맥폐색압(AOP)</b> 기준 설정을 권합니다. 관절 통증이나 부상으로 고중량이 막혔을 때의 대안이지, 기본 훈련의 대체재가 아닙니다.</p>
+      </div>
+    </article>
+
+    <article class="method">
+      <div class="rank">04</div>
+      <div class="top">
+        <h3>레스트포즈 · 클러스터 세트</h3>
+        <span class="en">Rest-pause · cluster sets</span>
+        <span class="ev s2"><span class="pips"><span class="pip"></span><span class="pip"></span><span class="pip"></span></span><span class="lab">중</span></span>
+      </div>
+      <div>
+        <p>레스트포즈와 드롭세트는 <strong>고역치 운동단위의 동원 상태를 길게 유지</strong>시킵니다. 클러스터 세트는 반대로 피로를 분산시켜 반복의 질과 최고 힘을 지켜냅니다. 목적이 다른 두 도구입니다.</p>
+        <p class="howto"><b>실전 —</b> 닉 워커의 15~20초 레스트포즈가 바로 앞쪽입니다. <b>동원 유지가 목적이면 레스트포즈, 폼 유지가 목적이면 클러스터</b>로 나눠 쓰세요. 한 종목에 둘을 같이 쓰면 회복이 못 따라옵니다.</p>
+      </div>
+    </article>
+
+    <article class="method">
+      <div class="rank">05</div>
+      <div class="top">
+        <h3>마인드-머슬 커넥션</h3>
+        <span class="en">Internal attentional focus</span>
+        <span class="ev s2"><span class="pips"><span class="pip"></span><span class="pip"></span><span class="pip"></span></span><span class="lab">중</span></span>
+      </div>
+      <div>
+        <p>Schoenfeld 2018 연구(비훈련 남성 30명, 8주)에서 내적 집중 그룹의 팔꿈치 굴근 두께는 <strong>12.4%</strong> 증가해 외적 집중 그룹의 6.9%를 앞섰습니다. 그런데 <strong>대퇴사두에서는 차이가 없었습니다</strong>. 효과가 부위와 종목을 탄다는 뜻입니다.</p>
+        <p class="howto"><b>실전 —</b> 래터럴 · 컬 · 푸시다운 · 레그컬 · 레그익스텐션 · 플라이 · 로우 · 힙스러스트 · 카프처럼 <b>한 근육에만 부하를 거는 고립 종목에서만</b> 씁니다. 무거운 복합 종목에서는 외적 집중(바를 밀어낸다)이 오히려 낫습니다. <b>한계</b> — 관련 연구 대부분이 EMG 기반인데, EMG 진폭은 장력도 미래 성장도 아닙니다.</p>
+      </div>
+    </article>
+
+    <article class="method">
+      <div class="rank">06</div>
+      <div class="top">
+        <h3>드롭세트</h3>
+        <span class="en">Drop sets</span>
+        <span class="ev s2"><span class="pips"><span class="pip"></span><span class="pip"></span><span class="pip"></span></span><span class="lab">중</span></span>
+      </div>
+      <div>
+        <p>메타분석 결론은 명확합니다 — 드롭세트와 전통적 세트의 <strong>비대 효과 차이는 없습니다</strong>. 대신 일부 방식은 훈련 시간을 <strong>1/2~1/3</strong>로 줄입니다. 즉 “더 좋은” 기법이 아니라 <strong>“더 빠른”</strong> 기법입니다.</p>
+        <p class="howto"><b>실전 —</b> 시간이 없을 때 쓰는 압축 도구로 생각하세요. 종목마다 붙이지 말고 <b>마지막 세트 하나에만</b>. 감량 단계처럼 회복 여력이 줄어든 시기에는 빈도를 더 낮춰야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="method">
+      <div class="rank">07</div>
+      <div class="top">
+        <h3>사전피로 · 슈퍼세트</h3>
+        <span class="en">Pre-exhaust · supersets</span>
+        <span class="ev s1"><span class="pips"><span class="pip"></span><span class="pip"></span><span class="pip"></span></span><span class="lab">약</span></span>
+      </div>
+      <div>
+        <p>고립 종목으로 먼저 지치게 한 뒤 복합 종목으로 넘어가는 방식입니다. 오래된 기법이지만 <strong>성장 우위를 입증한 메타분석 근거는 얇습니다</strong>. 여러 세트 전략을 비교한 연구에서도 드롭세트 쪽이 더 나은 결과를 보였습니다.</p>
+        <p class="howto"><b>실전 —</b> <b>시간 절약 목적</b>이라면 쓸 만합니다. “고립으로 먼저 태워야 더 큰다”는 주장은 아직 근거가 받쳐주지 않으니, 이걸 프로그램의 중심에 놓지는 마세요.</p>
+      </div>
+    </article>
+
+  </div>
+
+  <div class="recipe">
+    <h3>고립 종목 한 세트, 이렇게 조립한다</h3>
+    <p style="font-size:.88rem; margin:6px 0 0">위 기법들을 한 세트 안에 욱여넣지 않고 순서대로 배치한 형태입니다.</p>
+    <ol>
+      <li><b>전 가동범위 10~12회</b> — 실패까지 1~2회 남기고 멈춤(RIR 1~2). 여기까지가 본세트의 몸통입니다.</li>
+      <li><b>늘어난 구간에서 쉬지 않기</b> — 맨 아래에서 힘을 빼는 순간 장력이 끊깁니다. 장력 유지가 곧 자극입니다.</li>
+      <li><b>고립 종목에서만 내적 집중</b> — 해당 근육의 수축을 의식적으로 좇습니다. 복합 고중량에서는 하지 마세요.</li>
+      <li><b>마지막 세트만 강화 기법 하나</b> — 레스트포즈 <em>또는</em> 드롭 <em>또는</em> 늘어난 구간 부분반복. <b>셋 중 하나만</b>입니다.</li>
+      <li><b>펌핑은 채점표가 아니다</b> — 펌핑이 덜 와도 장력·반복·중량이 올라갔다면 그 세션은 성공입니다.</li>
+    </ol>
+  </div>
+</section>
+
+<!-- 6. 식단 -->
+<section>
+  <div class="sec-head">
+    <p class="eyebrow">06 — Fuel</p>
     <h2>하루 3,857 kcal · 5끼</h2>
     <p>훈련만큼이나 단순합니다. <strong>고단백 · 고탄수 · 저지방</strong>을 매일 똑같이 반복하고, 가끔 치팅밀로 숨통을 틉니다. 오프시즌에는 6끼 4,567 kcal까지 올라간 날도 공개했습니다.</p>
   </div>
@@ -535,10 +751,10 @@ ul.ex .rx{
   </div>
 </section>
 
-<!-- 6. 용어 -->
+<!-- 7. 용어 -->
 <section>
   <div class="sec-head">
-    <p class="eyebrow">06 — Glossary</p>
+    <p class="eyebrow">07 — Glossary</p>
     <h2>용어 뜯어보기</h2>
     <p>영상에서 계속 나오는 단어들을 어원과 한자로 풀면, 그 방법이 왜 그렇게 생겼는지가 같이 보입니다.</p>
   </div>
@@ -577,10 +793,10 @@ ul.ex .rx{
   </div>
 </section>
 
-<!-- 7. 적용 -->
+<!-- 8. 적용 -->
 <section>
   <div class="sec-head">
-    <p class="eyebrow">07 — Apply It</p>
+    <p class="eyebrow">08 — Apply It</p>
     <h2>일반인이 가져갈 것과 버릴 것</h2>
     <p>닉 워커의 프로그램은 10년 경력·프로 회복력·프로 약물 환경 위에 올라가 있습니다. 통째로 복사하는 건 거의 항상 나쁜 선택입니다.</p>
   </div>
@@ -610,7 +826,7 @@ ul.ex .rx{
   <p class="warn"><strong>참고 —</strong> 이 페이지는 공개된 유튜브 영상과 보도 내용을 정리한 <em>자료</em>이지, 의학적·코칭 조언이 아닙니다. 부상 이력이 있다면 종목 선택 전에 전문가에게 확인하세요.</p>
 </section>
 
-<!-- 8. 출처 -->
+<!-- 9. 출처 -->
 <section class="sources">
   <p class="eyebrow">Sources</p>
   <p style="margin-top:8px">2026년 9월 기준, 아래 공개 자료를 교차 확인해 정리했습니다.</p>
@@ -620,6 +836,16 @@ ul.ex .rx{
     <li>Fitness Volt — 2026 아놀드 클래식 이후 도리안 예이츠식 분할 공개, 2026 아놀드 프렙 백·레그 세션, 프로필 자료</li>
     <li>Generation Iron · Hosstile · SET FOR SET — 부위별 세션 리포트</li>
     <li>Kulturistika.com — 2026 아놀드 클래식 13주 전 등 운동, 3D 어깨 접근법</li>
+  </ul>
+  <p style="margin-top:16px"><strong style="color:var(--ink)">05 고립 · 펌핑 섹션</strong>은 선수 인터뷰가 아니라 아래 연구 문헌을 근거로 했습니다.</p>
+  <ul>
+    <li>Wolf et al. (2025) — 8주 상체 훈련, 늘어난 구간 부분반복 vs 전 가동범위 (PubMed 39959841), 그리고 15개 기관 다중 검증 연구</li>
+    <li>&ldquo;Does longer-muscle length resistance training cause greater longitudinal growth in humans?&rdquo; 체계적 고찰 (2025)</li>
+    <li>&ldquo;Load-induced human skeletal muscle hypertrophy: Mechanisms, myths, and misconceptions&rdquo; (2025) — 기계적 장력 1차 동인, 대사 스트레스·세포 팽창의 인과 근거 부족</li>
+    <li>Schoenfeld et al. (2018, Eur J Sport Sci) — 내적 vs 외적 집중, 팔꿈치 굴근 12.4% / 6.9%, 대퇴사두 차이 없음</li>
+    <li>드롭세트 메타분석 — Sports Medicine Open (2023) 및 후속 체계적 고찰: 비대 차이 없음, 시간은 1/2~1/3</li>
+    <li>BFR 체계적 고찰·메타분석 (2024–2025, Frontiers in Physiology 등) — 저부하 BFR ≈ 고부하 훈련, AOP 기준 개인별 압력 설정 권고</li>
+    <li>&ldquo;Effects of Advanced Resistance Training Systems on Muscle Hypertrophy and Strength&rdquo; 체계적 고찰·메타분석 — 레스트포즈·드롭·클러스터의 기전 구분</li>
   </ul>
 </section>
 
