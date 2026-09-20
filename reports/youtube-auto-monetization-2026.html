@@ -1,0 +1,654 @@
+<title>자동수익 퍼널 해부</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Gowun+Batang:wght@400;700&display=swap">
+<style>
+:root{
+  --bg:#EDEFEE; --surface:#FCFCFB; --surface-2:#F3F6F5; --band:#12211F;
+  --ink:#121A18; --ink-2:#4E5C59; --ink-3:#77837F;
+  --line:#D5DDDA; --line-2:#C0CAC6;
+  --accent:#009186; --accent-ink:#00655D; --accent-soft:#DBEDEA;
+  --risk:#A32C1E; --risk-soft:#F6E3E0;
+  --warn:#8A5A08; --warn-soft:#F7ECD8;
+  --go:#2E6B34; --go-soft:#E0EDE1;
+  --c1:#009186; --c2:#A6572B; --c3:#4B5FA8;
+  --band-ink:#EAF1EF; --band-ink-2:#93A8A4;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0D1211; --surface:#151D1C; --surface-2:#1B2524; --band:#080D0C;
+    --ink:#E7EEEC; --ink-2:#9DACA8; --ink-3:#7A8884;
+    --line:#26312F; --line-2:#33403D;
+    --accent:#16A895; --accent-ink:#4FC9B7; --accent-soft:#12302C;
+    --risk:#E37A69; --risk-soft:#32201D;
+    --warn:#D9A445; --warn-soft:#2C2417;
+    --go:#6BBE74; --go-soft:#182A1B;
+    --c1:#16A895; --c2:#D07E33; --c3:#7280DC;
+    --band-ink:#E7EEEC; --band-ink-2:#8A9A96;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0D1211; --surface:#151D1C; --surface-2:#1B2524; --band:#080D0C;
+  --ink:#E7EEEC; --ink-2:#9DACA8; --ink-3:#7A8884;
+  --line:#26312F; --line-2:#33403D;
+  --accent:#16A895; --accent-ink:#4FC9B7; --accent-soft:#12302C;
+  --risk:#E37A69; --risk-soft:#32201D;
+  --warn:#D9A445; --warn-soft:#2C2417;
+  --go:#6BBE74; --go-soft:#182A1B;
+  --c1:#16A895; --c2:#D07E33; --c3:#7280DC;
+  --band-ink:#E7EEEC; --band-ink-2:#8A9A96;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif;
+  font-size:15px; line-height:1.72; -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:900px; margin:0 auto; padding-inline:20px}
+.mono{font-family:'IBM Plex Mono',ui-monospace,monospace; font-variant-numeric:tabular-nums}
+
+/* ── masthead ─────────────────────────────── */
+.mast{background:var(--band); color:var(--band-ink); padding-block:34px 30px}
+.mast .wrap{display:grid; gap:18px}
+.casebar{display:flex; flex-wrap:wrap; gap:8px 18px; align-items:baseline;
+  font-family:'IBM Plex Mono',monospace; font-size:11.5px; letter-spacing:.09em;
+  text-transform:uppercase; color:var(--band-ink-2)}
+.casebar b{color:var(--accent-ink); font-weight:500}
+.mast h1{margin:0; font-size:clamp(30px,6.6vw,46px); line-height:1.12; font-weight:700;
+  letter-spacing:-.02em; text-wrap:balance}
+.mast .lede{margin:0; max-width:62ch; color:var(--band-ink-2); font-size:15.5px}
+.mast .lede em{font-style:normal; color:var(--band-ink); border-bottom:1px solid var(--accent); padding-bottom:1px}
+
+.verdict{display:grid; grid-template-columns:repeat(auto-fit,minmax(172px,1fr)); gap:1px;
+  background:rgba(255,255,255,.09); border:1px solid rgba(255,255,255,.09); margin-top:6px}
+.verdict div{background:var(--band); padding:14px 16px}
+.verdict dt{font-size:11px; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--band-ink-2); margin:0 0 4px}
+.verdict dd{margin:0; font-family:'IBM Plex Mono',monospace; font-size:21px;
+  font-variant-numeric:tabular-nums; color:var(--band-ink); line-height:1.25}
+.verdict dd small{display:block; font-family:inherit; font-size:11.5px; color:var(--band-ink-2);
+  font-family:'IBM Plex Sans KR',sans-serif; letter-spacing:0; margin-top:3px}
+
+/* ── sections ─────────────────────────────── */
+main{padding-block:0 60px}
+section{padding-block:44px; border-top:1px solid var(--line)}
+section:first-of-type{border-top:0}
+.eyebrow{font-family:'IBM Plex Mono',monospace; font-size:11.5px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--accent-ink); margin:0 0 10px}
+h2{margin:0 0 10px; font-size:clamp(21px,3.6vw,27px); line-height:1.3; font-weight:600;
+  letter-spacing:-.015em; text-wrap:balance}
+h3{margin:26px 0 10px; font-size:16.5px; font-weight:600; letter-spacing:-.005em}
+p{margin:0 0 14px; max-width:68ch}
+.sub{color:var(--ink-2); max-width:66ch}
+a{color:var(--accent-ink)}
+
+.note{font-size:13px; color:var(--ink-3); max-width:70ch}
+
+/* ── timeline ─────────────────────────────── */
+.tl{list-style:none; margin:20px 0 0; padding:0; display:grid; gap:0;
+  border-left:2px solid var(--line-2); }
+.tl li{display:grid; grid-template-columns:58px 1fr; gap:14px; padding:11px 0 11px 16px;
+  position:relative; border-bottom:1px solid var(--line)}
+.tl li:last-child{border-bottom:0}
+.tl li::before{content:""; position:absolute; left:-6px; top:19px; width:10px; height:10px;
+  border-radius:50%; background:var(--bg); border:2px solid var(--line-2)}
+.tl li.key::before{background:var(--accent); border-color:var(--accent)}
+.tl time{font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:var(--ink-3);
+  font-variant-numeric:tabular-nums; padding-top:2px}
+.tl b{display:block; font-weight:600; font-size:14.5px}
+.tl span{display:block; color:var(--ink-2); font-size:13.5px; line-height:1.62}
+.tl .tag{display:inline-block; margin-top:5px; font-family:'IBM Plex Mono',monospace;
+  font-size:10.5px; letter-spacing:.07em; text-transform:uppercase;
+  padding:2px 7px; border:1px solid var(--line-2); color:var(--ink-3); border-radius:2px}
+.tl li.key .tag{border-color:var(--accent); color:var(--accent-ink); background:var(--accent-soft)}
+
+/* ── two-layer ────────────────────────────── */
+.layers{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:20px}
+@media (max-width:620px){.layers{grid-template-columns:1fr}}
+.layer{background:var(--surface); border:1px solid var(--line); padding:18px 18px 16px}
+.layer.inner{border-color:var(--accent); box-shadow:0 1px 0 var(--accent) inset}
+.layer h4{margin:0 0 3px; font-size:15px; font-weight:600}
+.layer .kicker{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--ink-3); margin:0 0 8px}
+.layer.inner .kicker{color:var(--accent-ink)}
+.layer ul{margin:10px 0 0; padding-left:18px; font-size:13.8px; color:var(--ink-2); line-height:1.7}
+.layer li{margin-bottom:5px}
+.layer li b{color:var(--ink); font-weight:600}
+
+/* ── funnel ───────────────────────────────── */
+.funnel{list-style:none; margin:18px 0 0; padding:0; display:grid; gap:6px}
+.funnel li{display:grid; grid-template-columns:26px 1fr; gap:12px; align-items:start;
+  background:var(--surface-2); border:1px solid var(--line); padding:11px 14px}
+.funnel li .n{font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--accent-ink)}
+.funnel li b{font-weight:600; font-size:14.5px}
+.funnel li span{display:block; color:var(--ink-2); font-size:13.4px}
+.funnel li:nth-child(1){margin-inline:0}
+.funnel li:nth-child(2){margin-inline:14px 0}
+.funnel li:nth-child(3){margin-inline:28px 0}
+.funnel li:nth-child(4){margin-inline:42px 0; border-color:var(--accent); background:var(--accent-soft)}
+@media (max-width:620px){.funnel li{margin-inline:0 !important}}
+
+/* ── chart ────────────────────────────────── */
+figure{margin:22px 0 0; background:var(--surface); border:1px solid var(--line); padding:18px 16px 14px}
+figcaption{font-size:12.6px; color:var(--ink-3); margin-top:10px; line-height:1.6}
+.chart-title{font-size:14.5px; font-weight:600; margin:0 0 2px}
+.chart-sub{font-size:12.5px; color:var(--ink-3); margin:0 0 6px}
+svg{display:block; width:100%; height:auto; max-width:100%}
+.ax{fill:var(--ink-3); font-family:'IBM Plex Mono',monospace; font-size:11px}
+.lab{fill:var(--ink); font-family:'IBM Plex Sans KR',sans-serif; font-size:12.5px}
+.val{fill:var(--ink-2); font-family:'IBM Plex Mono',monospace; font-size:11.5px}
+.grid{stroke:var(--line); stroke-width:1}
+.axis{stroke:var(--line-2); stroke-width:1}
+
+/* ── table ────────────────────────────────── */
+.tbox{overflow-x:auto; margin-top:20px; border:1px solid var(--line); background:var(--surface)}
+table{border-collapse:collapse; width:100%; min-width:700px; font-size:13.4px}
+th,td{padding:10px 12px; text-align:left; border-bottom:1px solid var(--line); vertical-align:top}
+thead th{background:var(--surface-2); font-size:11.5px; letter-spacing:.06em; text-transform:uppercase;
+  color:var(--ink-3); font-weight:500; white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+td.m{font-family:'IBM Plex Mono',monospace; font-variant-numeric:tabular-nums; white-space:nowrap}
+td b{font-weight:600}
+td small{display:block; color:var(--ink-3); font-size:12px; line-height:1.55; margin-top:2px}
+.pill{display:inline-flex; align-items:center; gap:5px; font-size:11.5px; font-weight:500;
+  padding:2px 8px; border-radius:2px; white-space:nowrap; letter-spacing:.01em}
+.pill::before{content:""; width:6px; height:6px; border-radius:50%; background:currentColor}
+.p-go{background:var(--go-soft); color:var(--go)}
+.p-warn{background:var(--warn-soft); color:var(--warn)}
+.p-risk{background:var(--risk-soft); color:var(--risk)}
+
+/* ── policy clock ─────────────────────────── */
+.clock{display:grid; gap:0; margin-top:20px; border:1px solid var(--line); background:var(--surface)}
+.clock div{display:grid; grid-template-columns:104px 1fr; gap:14px; padding:13px 16px;
+  border-bottom:1px solid var(--line)}
+.clock div:last-child{border-bottom:0}
+.clock div.now{background:var(--accent-soft)}
+.clock div.future{background:var(--risk-soft)}
+.clock .when{font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:var(--ink-2);
+  font-variant-numeric:tabular-nums}
+.clock .now .when{color:var(--accent-ink); font-weight:500}
+.clock .future .when{color:var(--risk); font-weight:500}
+.clock b{font-weight:600; font-size:14.3px; display:block}
+.clock span{color:var(--ink-2); font-size:13.4px}
+@media (max-width:560px){.clock div{grid-template-columns:1fr; gap:3px}}
+
+/* ── checklist ────────────────────────────── */
+.flags{list-style:none; margin:18px 0 0; padding:0; display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(255px,1fr)); gap:1px; background:var(--line);
+  border:1px solid var(--line)}
+.flags li{background:var(--surface); padding:13px 15px}
+.flags b{display:block; font-size:13.8px; font-weight:600; margin-bottom:2px}
+.flags span{font-size:12.9px; color:var(--ink-2); line-height:1.6}
+.flags .src{font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--ink-3);
+  display:block; margin-top:5px; letter-spacing:.03em}
+
+/* ── pull quote ───────────────────────────── */
+blockquote{margin:24px 0; padding:2px 0 2px 20px; border-left:3px solid var(--accent);
+  font-family:'Gowun Batang',serif; font-size:19px; line-height:1.68; color:var(--ink);
+  max-width:60ch}
+blockquote cite{display:block; font-family:'IBM Plex Sans KR',sans-serif; font-size:12.5px;
+  font-style:normal; color:var(--ink-3); margin-top:8px}
+
+/* ── plan ─────────────────────────────────── */
+.tracks{display:grid; gap:12px; margin-top:20px}
+.track{background:var(--surface); border:1px solid var(--line); border-left:4px solid var(--line-2);
+  padding:16px 18px}
+.track.a{border-left-color:var(--c1)}
+.track.b{border-left-color:var(--c2)}
+.track.c{border-left-color:var(--c3)}
+.track .hd{display:flex; flex-wrap:wrap; gap:6px 12px; align-items:baseline; margin-bottom:6px}
+.track .hd b{font-size:15.5px; font-weight:600}
+.track .hd .mono{font-size:11.5px; color:var(--ink-3); letter-spacing:.06em; text-transform:uppercase}
+.track p{margin:0 0 8px; font-size:13.8px; color:var(--ink-2)}
+.track ul{margin:0; padding-left:18px; font-size:13.5px; color:var(--ink-2)}
+.track ul b{color:var(--ink)}
+
+.srcs{list-style:none; margin:14px 0 0; padding:0; display:grid; gap:7px; font-size:13px}
+.srcs li{color:var(--ink-2); line-height:1.6}
+.srcs a{word-break:break-word}
+
+.foot{border-top:1px solid var(--line); padding-block:22px; color:var(--ink-3); font-size:12.4px}
+
+:where(a,button,summary):focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{animation:none !important; transition:none !important}}
+</style>
+
+<header class="mast">
+  <div class="wrap">
+    <div class="casebar">
+      <span>실사 보고 · Funnel Teardown</span>
+      <span>대상 <b>youtu.be/X070QO5Hx58</b></span>
+      <span>씬 분석 23컷 / 4분 15초</span>
+      <span>기준일 2026-09-20</span>
+    </div>
+    <h1>강의는 상품이 아니라<br>퍼널의 끝단이다</h1>
+    <p class="lede">
+      “스마트폰 하나로 48억”류 국내 자동수익 채널을 컷 단위로 뜯어봤다.
+      이들이 파는 건 AI 툴이 아니라 <em>무료 전자책 → DB → 고가 결제</em>로 이어지는 구조다.
+      그 구조에서 <em>합법적으로 복제 가능한 부분</em>과, 2027년 2월에 닫히는 문을 정리했다.
+    </p>
+    <dl class="verdict">
+      <div><dt>YPP 현행 기준 마감</dt><dd>D-134<small>2027-02-01부터 신규 채널 2배 상향</small></dd></div>
+      <div><dt>금융·부동산 롱폼 RPM</dt><dd>$15–50<small>쇼츠 대비 약 300배 구간</small></dd></div>
+      <div><dt>부업 강의 피해 결제액</dt><dd>89.8%<small>100만~400만원 구간 (한국소비자원)</small></dd></div>
+      <div><dt>앤디 즉시 실행 트랙</dt><dd>3개<small>본진 · 증폭 · 부수</small></dd></div>
+    </dl>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- 1 ────────────────────────────────────── -->
+<section>
+  <p class="eyebrow">01 · 컷 해부</p>
+  <h2>4분 15초 안에 설계된 7단계</h2>
+  <p class="sub">
+    영상 전체를 씬 단위로 분해하면 감정선이 아니라 <b>세일즈 시퀀스</b>가 나온다.
+    특히 인터뷰(제3자 리액션) 형식을 쓴 이유가 분명하다 — 자기 자랑을 남의 입으로 대신 시켜 거부감을 지운다.
+  </p>
+
+  <ol class="tl">
+    <li class="key">
+      <time>0:00</time>
+      <div><b>숫자부터 던진다</b>
+      <span>토스 잔고 4,817,965,633원 익스트림 클로즈업. 엄지로 스크롤해 “움직이니까 진짜”를 증명.</span>
+      <span class="tag">Hook — 숫자 선제시</span></div>
+    </li>
+    <li>
+      <time>0:07</time>
+      <div><b>부조화로 호기심 고정</b>
+      <span>48억 잔고 → 옷·쓰레기가 널린 원룸(“돼지우리”). 어긋남 자체가 이탈 방지 장치.</span>
+      <span class="tag">Gap — 인지 부조화</span></div>
+    </li>
+    <li>
+      <time>0:11</time>
+      <div><b>정체 공개: 2001년생 25세 건물주</b>
+      <span>나이를 가장 강한 후킹 자산으로 쓴다. “나도 되겠다”의 근거로 어린 나이를 배치.</span>
+      <span class="tag">Identity</span></div>
+    </li>
+    <li class="key">
+      <time>0:24</time>
+      <div><b>진입장벽 제거</b>
+      <span>“주머니 속 이 폰 하나로.” 장비·자본·경력을 전부 지운다. 시청자의 “나는 못 해” 반론을 선제 차단.</span>
+      <span class="tag">Objection Kill</span></div>
+    </li>
+    <li>
+      <time>0:40</time>
+      <div><b>상품 노출: AI 아바타</b>
+      <span>모니터에 AI로 만든 여성 인플루언서가 콘도그를 먹는 영상. 곧이어 “1분 광고에 5,400만원” 기사 헤드라인.</span>
+      <span class="tag">Product + 시장 크기</span></div>
+    </li>
+    <li>
+      <time>0:48</time>
+      <div><b>커리큘럼 티저</b>
+      <span>메모장에 수익화 방법 7가지 목록. 그중 <b>공동구매</b>만 파랗게 하이라이트 — 전체는 안 주고 한 조각만 보여준다.</span>
+      <span class="tag">Curiosity Gap</span></div>
+    </li>
+    <li>
+      <time>0:50</time>
+      <div><b>희소성 선언</b>
+      <span>“확실히 나만 안다. 국내 1등. 아직 아무도 모른다.” 검증 불가능한 문장으로 대체재를 차단.</span>
+      <span class="tag">Scarcity</span></div>
+    </li>
+    <li class="key">
+      <time>0:55</time>
+      <div><b>여기가 진짜 목적지 — 무료 배포</b>
+      <span>『AI 인스타그램으로 월 1000만원』 제본 책자를 들고 “원래 유료인데 공짜로 준다.” 영상의 존재 이유는 이 한 컷의 <b>리드(연락처) 수집</b>이다.</span>
+      <span class="tag">Lead Magnet — 핵심</span></div>
+    </li>
+    <li>
+      <time>1:48</time>
+      <div><b>과거사 서사</b>
+      <span>막노동, 20살 시험 실패, 5평 방, 새벽 5시 기상. 시청자 중 가장 절박한 층과 자신을 동일시시킨다.</span>
+      <span class="tag">Origin Story</span></div>
+    </li>
+    <li>
+      <time>2:13</time>
+      <div><b>실시간 재증명</b>
+      <span>지문인식 → 잔고 재노출. 캡처가 아님을 강조하는 전형적 신뢰 확보 수법.</span>
+      <span class="tag">Proof</span></div>
+    </li>
+    <li>
+      <time>2:46</time>
+      <div><b>물증 3종 세트</b>
+      <span>서울 50평 아파트 12.6억 매매계약서 → 마포 6층 180평 “사옥” → 롤렉스 포함 시계 2,000만·1,000만원.</span>
+      <span class="tag">Status Stack</span></div>
+    </li>
+    <li class="key">
+      <time>4:01</time>
+      <div><b>CTA</b>
+      <span>“AI 아바타가 비밀이다. 7가지 수익 방법을 오늘 다 공개한다.” — 본편이 아니라 <b>다음 단계(신청)</b>로 넘긴다.</span>
+      <span class="tag">Call To Action</span></div>
+    </li>
+  </ol>
+
+  <blockquote>
+    영상 어디에도 “어떻게”는 없다. 있는 건 결과(48억), 신분(건물주), 그리고 신청 버튼뿐이다.
+    <cite>씬 23컷 전량 분석 결과 — 실행 가능한 방법론 노출 0건</cite>
+  </blockquote>
+</section>
+
+<!-- 2 ────────────────────────────────────── -->
+<section>
+  <p class="eyebrow">02 · 2층 구조</p>
+  <h2>가르치는 수익원과 실제 수익원은 다르다</h2>
+  <p class="sub">
+    이 장르의 채널은 두 개의 손익계산서를 동시에 돌린다. 겉장은 시청자에게 파는 꿈이고, 속장이 현금흐름이다.
+    구독자 35만 규모 국내 사례(머니몬스터)의 공개 수익 모델도 광고 단독이 아니라
+    <b>AI 영상 제작 대행 · 전자책/교육 상품 · 팀 단위 수익 공유</b> 조합이다.
+  </p>
+
+  <div class="layers">
+    <div class="layer">
+      <p class="kicker">겉장 — 영상에서 말하는 것</p>
+      <h4>“AI가 알아서 벌어준다”</h4>
+      <ul>
+        <li><b>AI 아바타</b>로 인스타 운영 → 협찬·공동구매</li>
+        <li><b>AI 쇼츠 양산</b> → 유튜브 애드센스</li>
+        <li><b>자동 블로그</b> → 애드센스 + 쿠팡파트너스</li>
+        <li>“폰 하나면 된다 / 하루 30분이면 된다”</li>
+      </ul>
+    </div>
+    <div class="layer inner">
+      <p class="kicker">속장 — 실제 매출이 찍히는 곳</p>
+      <h4>고가 강의·코칭 결제</h4>
+      <ul>
+        <li><b>무료 전자책</b>으로 연락처 확보 (리드 원가 절감)</li>
+        <li>전화·단톡 상담 → <b>100만~400만원대</b> 결제</li>
+        <li>제작 <b>대행 수주</b> (본인 채널이 곧 포트폴리오)</li>
+        <li>수강생 채널 <b>수익 공유·지분</b> 구조</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>퍼널 4단</h3>
+  <ol class="funnel">
+    <li><span class="n">01</span><div><b>도달</b><span>유튜브 광고·쇼츠로 “48억” 후킹. 조회수 자체는 비용 항목이지 수익이 아니다.</span></div></li>
+    <li><span class="n">02</span><div><b>리드</b><span>무료 전자책/무료 특강 신청 — 이름·연락처·카톡 채널 추가.</span></div></li>
+    <li><span class="n">03</span><div><b>상담</b><span>1:1 전화 또는 라이브 설명회. 희소성·마감 압박을 다시 건다.</span></div></li>
+    <li><span class="n">04</span><div><b>결제</b><span>고가 패키지. 한국소비자원 피해구제 통계상 이 장르 결제액의 <b>89.8%가 100만~400만원</b> 구간이다.</span></div></li>
+  </ol>
+  <p class="note">
+    ※ 퍼널 단계는 영상 구조와 공개 사례에서 재구성한 것이고, 89.8%는 소비자원 피해구제 접수 건 기준이라
+    전체 수강생 결제액 분포와는 다르다. 단계별 전환율은 공개된 검증 수치가 없어 싣지 않았다.
+  </p>
+</section>
+
+<!-- 3 ────────────────────────────────────── -->
+<section>
+  <p class="eyebrow">03 · 숫자의 현실</p>
+  <h2>쇼츠를 아무리 찍어도 단가가 바닥이다</h2>
+  <p class="sub">
+    자동화 강의가 “쇼츠 양산”을 미는 이유는 제작이 쉬워서지, 돈이 돼서가 아니다.
+    같은 1,000회 조회라도 주제에 따라 수익은 세 자릿수 배 차이가 난다.
+  </p>
+
+  <figure>
+    <p class="chart-title">주제별 RPM 구간 (1,000회 조회당 USD)</p>
+    <p class="chart-sub">가로축 로그 눈금 · 막대는 최저~최고 구간</p>
+    <svg viewBox="0 0 720 258" role="img" aria-label="주제별 RPM 구간 비교. 쇼츠 0.04~0.07달러, 엔터·일상 롱폼 3~8달러, 기술·AI 롱폼 12~30달러, 금융·투자·부동산 롱폼 15~50달러.">
+      <line class="grid" x1="209.2" y1="26" x2="209.2" y2="205"></line>
+      <line class="grid" x1="252.5" y1="26" x2="252.5" y2="205"></line>
+      <line class="grid" x1="353.0" y1="26" x2="353.0" y2="205"></line>
+      <line class="grid" x1="396.3" y1="26" x2="396.3" y2="205"></line>
+      <line class="grid" x1="496.8" y1="26" x2="496.8" y2="205"></line>
+      <line class="grid" x1="540.1" y1="26" x2="540.1" y2="205"></line>
+      <line class="grid" x1="640.6" y1="26" x2="640.6" y2="205"></line>
+      <line class="axis" x1="152" y1="205" x2="690" y2="205"></line>
+
+      <text class="ax" x="209.2" y="222" text-anchor="middle">$0.05</text>
+      <text class="ax" x="252.5" y="222" text-anchor="middle">$0.1</text>
+      <text class="ax" x="353.0" y="222" text-anchor="middle">$0.5</text>
+      <text class="ax" x="396.3" y="222" text-anchor="middle">$1</text>
+      <text class="ax" x="496.8" y="222" text-anchor="middle">$5</text>
+      <text class="ax" x="540.1" y="222" text-anchor="middle">$10</text>
+      <text class="ax" x="640.6" y="222" text-anchor="middle">$50</text>
+
+      <text class="lab" x="140" y="53" text-anchor="end">쇼츠 (숏폼)</text>
+      <rect x="195.3" y="41" width="34.9" height="14" rx="4" fill="var(--c1)"></rect>
+      <text class="val" x="240" y="52">$0.04–0.07</text>
+
+      <text class="lab" x="140" y="97" text-anchor="end">엔터·일상 롱폼</text>
+      <rect x="464.9" y="85" width="61.3" height="14" rx="4" fill="var(--c1)"></rect>
+      <text class="val" x="536" y="96">$3–8</text>
+
+      <text class="lab" x="140" y="141" text-anchor="end">기술·AI 롱폼</text>
+      <rect x="551.5" y="129" width="57.2" height="14" rx="4" fill="var(--c1)"></rect>
+      <text class="val" x="618" y="140">$12–30</text>
+
+      <text class="lab" x="140" y="185" text-anchor="end">금융·투자·부동산</text>
+      <rect x="565.4" y="173" width="75.2" height="14" rx="4" fill="var(--c1)"></rect>
+      <text class="val" x="650" y="184">$15–50</text>
+
+      <text class="ax" x="152" y="243" fill="var(--ink-3)">쇼츠 100만 조회 ≈ 5~9만원 / 금융 롱폼 10만 조회 ≈ 200~700만원 구간</text>
+    </svg>
+    <figcaption>
+      쇼츠 RPM은 약 $0.04–0.07(50~90원), 롱폼은 통상 $2–8. 금융·투자는 $15–50, 기술·AI는 $12–30 구간으로 보고된다.
+      숫자는 채널·시즌·시청 국가에 따라 크게 흔들리므로 절대값이 아니라 <b>구간 간 배율</b>로 읽을 것.
+    </figcaption>
+  </figure>
+
+  <h3>제작 원가는 이미 충분히 싸다 — 그게 문제다</h3>
+  <p class="sub">
+    2026년 기준 영상 생성 단가는 초당 $0.03(Veo 3.1)에서 $0.15~0.25(Sora 2·Seedance Pro) 수준.
+    30초 쇼츠 한 편의 원가는 대략 <b>1,400원~1만원</b>이다. n8n 셀프호스팅이면 워크플로우 비용은 서버비뿐이다.
+    즉 “만들 수 있느냐”는 더 이상 경쟁 요소가 아니고, 누구나 만들 수 있기 때문에 <b>조회 단가가 눌린다</b>.
+  </p>
+</section>
+
+<!-- 4 ────────────────────────────────────── -->
+<section>
+  <p class="eyebrow">04 · 방법별 실사</p>
+  <h2>7가지 방법, 실제로 되는 건 몇 개인가</h2>
+  <p class="sub">
+    강의에서 다뤄지는 방법들을 난이도·원가·회수기간·정책리스크로 놓고 봤다.
+    “앤디 적합도”는 이미 보유한 자산(부동산 교육 사업 · EA/인디케이터 · 실전 계좌 경험)을 기준으로 매겼다.
+  </p>
+
+  <div class="tbox">
+    <table>
+      <thead>
+        <tr>
+          <th>방법</th><th>초기 원가</th><th>첫 수익까지</th><th>2026 정책 리스크</th><th>앤디 적합도</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><b>AI 아바타 인플루언서</b><small>인스타 협찬·공동구매·라이브커머스</small></td>
+          <td class="m">월 3만~15만원</td>
+          <td class="m">4~8개월<small>팔로워 1만 이상부터 공구 가능</small></td>
+          <td><span class="pill p-warn">중</span><small>플랫폼 AI 표기 의무 강화 흐름</small></td>
+          <td><span class="pill p-risk">낮음</span><small>본인 전문성과 무관, 운영 시간만 잡아먹음</small></td>
+        </tr>
+        <tr>
+          <td><b>AI 쇼츠 양산</b><small>애드센스 단독</small></td>
+          <td class="m">편당 1,400~1만원</td>
+          <td class="m">6~12개월<small>쇼츠 수익화 요건 90일 1,000만뷰</small></td>
+          <td><span class="pill p-risk">높음</span><small>‘반복·대량생산’ = 수익화 제외 1순위</small></td>
+          <td><span class="pill p-risk">낮음</span><small>단가 바닥 + 차단 리스크</small></td>
+        </tr>
+        <tr>
+          <td><b>자동 블로그</b><small>애드센스 + 쿠팡파트너스</small></td>
+          <td class="m">월 1만~3만원</td>
+          <td class="m">3~6개월</td>
+          <td><span class="pill p-risk">높음</span><small>구글 scaled content abuse 집행 대상</small></td>
+          <td><span class="pill p-warn">중간</span><small>부동산 실무 글이면 통과, 양산은 위험</small></td>
+        </tr>
+        <tr>
+          <td><b>자동화 구축 대행</b><small>n8n/Make 워크플로우 납품</small></td>
+          <td class="m">거의 0원<small>기술 학습 시간이 원가</small></td>
+          <td class="m">1~2개월<small>수주만 되면 즉시</small></td>
+          <td><span class="pill p-go">낮음</span><small>플랫폼 정책과 무관한 B2B 용역</small></td>
+          <td><span class="pill p-go">높음</span><small>바이브 코딩 역량이 그대로 상품화</small></td>
+        </tr>
+        <tr>
+          <td><b>전자책·온라인 강의</b><small>인포프로덕트</small></td>
+          <td class="m">거의 0원</td>
+          <td class="m">1~3개월</td>
+          <td><span class="pill p-warn">중</span><small>과장 광고 시 소비자원·표시광고법 리스크</small></td>
+          <td><span class="pill p-go">높음</span><small>DAWIIN Academy 커리큘럼이 이미 존재</small></td>
+        </tr>
+        <tr>
+          <td><b>AI 영상 제작 대행</b><small>크몽·숨고 등</small></td>
+          <td class="m">건당 원가 1만원 내외</td>
+          <td class="m">1~2개월<small>쇼츠 건당 수만~30만원대</small></td>
+          <td><span class="pill p-go">낮음</span></td>
+          <td><span class="pill p-warn">중간</span><small>현금은 되지만 시간을 파는 구조</small></td>
+        </tr>
+        <tr>
+          <td><b>채널 수익 공유·지분</b><small>팀 단위 운영</small></td>
+          <td class="m">인건비·정산 관리</td>
+          <td class="m">6개월+</td>
+          <td><span class="pill p-warn">중</span><small>정산 분쟁이 실제 리스크</small></td>
+          <td><span class="pill p-warn">중간</span><small>본진이 자리잡은 뒤 확장 옵션</small></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">
+    원가·기간은 공개 단가표와 사례 기반 추정 구간이며 보장 수치가 아니다.
+    정책 리스크는 유튜브 수익창출 정책 및 구글 스팸 정책의 2025–2026 집행 방향 기준.
+  </p>
+</section>
+
+<!-- 5 ────────────────────────────────────── -->
+<section>
+  <p class="eyebrow">05 · 정책 시계</p>
+  <h2>문이 닫히기까지 134일</h2>
+  <p class="sub">
+    2026년의 진짜 변수는 툴이 아니라 규정이다. 특히 신규 채널의 수익화 문턱이 2027년 2월 1일에 두 배가 된다.
+    지금 시작해 그 전에 요건을 채우면 현행 기준으로 들어갈 수 있다.
+  </p>
+
+  <div class="clock">
+    <div>
+      <span class="when">2025-07</span>
+      <div><b>유튜브, ‘반복·대량생산 콘텐츠’ 정책 명문화</b>
+      <span>AI·CGI·템플릿으로 영상 간 차별성 없이 찍어내는 콘텐츠를 ‘비진정성(inauthentic)’으로 규정. 판단 기준은 AI 사용 여부가 아니라 <b>사람의 기획 의도와 개입</b>.</span></div>
+    </div>
+    <div>
+      <span class="when">2026-03 · 08</span>
+      <div><b>구글 코어·스팸 업데이트 — scaled content abuse 집행</b>
+      <span>편집 감독 없이 AI 페이지를 수백~수천 개 발행한 사이트에서 트래픽 50~80% 감소 사례가 보고됨. AI 작성 자체는 위반이 아니고, <b>목적 없는 대량 생성</b>이 대상.</span></div>
+    </div>
+    <div>
+      <span class="when">추가 제한</span>
+      <div><b>민감 분야 AI 아바타 광고수익 제외</b>
+      <span>의료·금융·법률 분야에서 실존 인물을 본뜬 AI 아바타가 조언하는 콘텐츠는 광고 수익 대상에서 제외. → 투자·EA 콘텐츠는 <b>본인 얼굴·음성</b>으로 가야 한다.</span></div>
+    </div>
+    <div class="now">
+      <span class="when">현재 (D-134)</span>
+      <div><b>YPP 현행 요건이 아직 유효</b>
+      <span>구독자 1,000명 + 최근 12개월 시청 4,000시간, 또는 최근 90일 쇼츠 조회 1,000만 회. <b>2027-01-31까지 신청분</b>에 적용.</span></div>
+    </div>
+    <div class="future">
+      <span class="when">2027-02-01</span>
+      <div><b>신규 채널 요건 2배 상향</b>
+      <span>시청 <b>8,000시간</b> / 쇼츠 <b>2,000만 회</b>로 인상. 기존 파트너는 상향 적용을 받지 않지만 <b>2027-01-31까지 업데이트 약관 동의</b>를 해야 자격이 유지된다. 대신 유튜브 쇼핑 보너스·브랜드딜 인센티브 등 마일스톤형 수익 경로가 신설될 예정.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 6 ────────────────────────────────────── -->
+<section>
+  <p class="eyebrow">06 · 위험 신호</p>
+  <h2>결제 전 3초 안에 걸러내는 신호들</h2>
+  <p class="sub">
+    한국소비자원 집계에서 이 장르의 피해구제 접수는 2021~2023년 연 3건 수준이다가
+    2024년 이후 급증해 <b>1년 새 4배</b>로 늘었다. 주제별로는 브랜드홍보 알선 29.8%,
+    <b>유튜브 채널 수익화 23.4%</b>, SNS 마케팅 19.1%, 쇼핑몰 17.1% 순이다.
+  </p>
+
+  <ul class="flags">
+    <li><b>잔고·계약서·명품 인증</b><span>수익 방법이 아니라 수익 결과만 반복 노출. 분석 대상 영상은 4분 중 약 2분을 여기에 썼다.</span><span class="src">영상 0:00 / 2:13 / 2:46 / 3:46</span></li>
+    <li><b>“나만 안다 / 국내 1등”</b><span>검증 불가능한 독점 주장. 반증도 비교도 못 하게 만드는 장치.</span><span class="src">영상 0:50</span></li>
+    <li><b>무료 전자책·무료 특강</b><span>무료 자체는 문제가 아니다. 다만 그 뒤에 고가 결제 상담이 붙는지를 먼저 물어라.</span><span class="src">영상 0:55</span></li>
+    <li><b>구체적 월 수익 ‘보장’</b><span>소비자원도 “강의만으로 즉각 수익 창출 가능” 주장을 경계 대상으로 명시했다.</span><span class="src">한국소비자원 소비자 피해주의보</span></li>
+    <li><b>환급 규정 비공개</b><span>피해 사유 중 환급 거부가 27.1%. 결제 전 환급 규정 문서를 못 받으면 그 자리에서 끝낼 것.</span><span class="src">피해 사유: 품질불만 40.7% · 계약불이행 28.8% · 환급거부 27.1% · 추가결제 3.4%</span></li>
+    <li><b>결제 후 추가 결제 유도</b><span>“기본반 이수 후 실전반” 구조. 총액 기준으로 계약서를 요구하라.</span><span class="src">결제액 100만~400만원 구간이 89.8%</span></li>
+  </ul>
+
+  <h3>결제 직전에 던질 세 문장</h3>
+  <p class="sub">
+    ① “수강생 채널 URL 3개와 개설일을 주세요.” — 성과는 채널 나이로 검증된다.<br>
+    ② “환급 규정 전문과 총 결제 예정액을 문서로 주세요.”<br>
+    ③ “2027년 2월 YPP 요건 상향에 대한 대응이 커리큘럼에 있나요?” — 최신 정책을 모르면 콘텐츠가 오래된 것이다.
+  </p>
+</section>
+
+<!-- 7 ────────────────────────────────────── -->
+<section>
+  <p class="eyebrow">07 · 실행안</p>
+  <h2>앤디가 복제할 부분은 툴이 아니라 퍼널이다</h2>
+  <p class="sub">
+    이 장르의 채널들이 가진 유일한 진짜 자산은 <b>퍼널</b>이다. 그런데 그들은 팔 실물이 없어서 “강의”를 급조한다.
+    앤디는 순서가 반대다 — <b>이미 실물이 있다</b>: DAWIIN Academy의 부동산 전문가 커리큘럼(경매·중개실무·토지개발·디벨롭먼트),
+    EA와 인디케이터, 실계좌 운용 경험. 여기에 퍼널만 붙이면 과장 없이 같은 구조가 돌아간다.
+    게다가 부동산·투자는 RPM 최상위 구간($15–50)이다.
+  </p>
+
+  <div class="tracks">
+    <div class="track a">
+      <div class="hd"><b>트랙 A — 본진</b><span class="mono">부동산 롱폼 → DAWIIN 강의</span></div>
+      <p>가장 높은 RPM 구간 + 정책 리스크 최저(실존 전문가·실제 사례). 광고 수익은 덤이고 목적은 수강 전환이다.</p>
+      <ul>
+        <li><b>콘텐츠:</b> 실제 경매 물건 1건을 처음부터 끝까지 따라가는 10~15분 롱폼. 주 1편.</li>
+        <li><b>리드 마그넷:</b> 「경매 권리분석 체크리스트 PDF」 무료 — 영상 말미 1회만 안내.</li>
+        <li><b>전환:</b> 상담 신청 → DAWIIN 과정. 잔고 인증·수익 보장 문구는 쓰지 않는다.</li>
+        <li><b>D-134 목표:</b> 롱폼 20편으로 시청 4,000시간 + 구독 1,000명 → 2027-01-31 전 YPP 신청.</li>
+      </ul>
+    </div>
+    <div class="track b">
+      <div class="hd"><b>트랙 B — 증폭</b><span class="mono">AI 쇼츠, 단 ‘사람 개입’ 포함</span></div>
+      <p>쇼츠는 수익원이 아니라 <b>롱폼 유입 장치</b>로만 쓴다. 순수 양산은 비진정성 정책의 1순위 타깃이다.</p>
+      <ul>
+        <li><b>제작:</b> n8n 셀프호스팅 + 영상 생성 API. 롱폼 1편 → 쇼츠 3편 파생.</li>
+        <li><b>안전선:</b> 본인 음성 해설·실제 물건 데이터·자체 분석을 반드시 얹는다. 템플릿 반복 금지.</li>
+        <li><b>원가 관리:</b> 편당 1,400원~1만원. 월 30편이라도 원가 30만원 이하로 유지.</li>
+      </ul>
+    </div>
+    <div class="track c">
+      <div class="hd"><b>트랙 C — 부수</b><span class="mono">자동화 구축 대행 + EA/인디케이터</span></div>
+      <p>플랫폼 정책과 무관하게 현금이 도는 유일한 트랙. 회수 기간이 가장 짧다(1~2개월).</p>
+      <ul>
+        <li><b>대행:</b> 부동산 중개사무소 대상 n8n 자동화(매물 리포트·상담 응대) 납품. 본인 채널이 포트폴리오.</li>
+        <li><b>제품:</b> EA·인디케이터는 유튜브 대신 제품 판매 채널로. 단 <b>금융 분야 AI 아바타 조언은 광고수익 제외 대상</b>이므로 반드시 본인 얼굴·음성으로 제작.</li>
+        <li><b>주의:</b> 수익률·백테스트 결과를 보장처럼 표현하면 표시광고법 리스크가 생긴다.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>우선순위 한 줄</h3>
+  <p class="sub">
+    <b>C(현금) → A(자산) → B(증폭)</b> 순으로 시작한다.
+    C는 이번 달 매출을 만들고, A는 2027년 2월 전에 수익화 자격을 확보하며, B는 A가 궤도에 오른 뒤에만 켠다.
+    반대로 B부터 시작하면 단가 바닥 구간에서 정책 리스크만 떠안는다 — 그게 지금 대부분의 “AI 자동화 채널”이 서 있는 자리다.
+  </p>
+</section>
+
+<!-- 8 ────────────────────────────────────── -->
+<section>
+  <p class="eyebrow">08 · 출처</p>
+  <h2>확인에 쓴 자료</h2>
+  <ul class="srcs">
+    <li>대상 영상 씬 분석 23컷 — <a href="https://youtu.be/X070QO5Hx58">youtu.be/X070QO5Hx58</a> (4:15, 자동 씬 분해)</li>
+    <li>YPP 요건 변경 — <a href="https://blog.youtube/intl/ko-kr/news-and-events/youtube-partner-program-updates-2027-new-opportunities-earn/">YouTube 공식 블로그</a> · <a href="https://m.ytn.co.kr/news_view.amp.php?version=1&amp;param=0104_202608111432171525">YTN</a></li>
+    <li>수익 창출 정책 — <a href="https://support.google.com/youtube/answer/1311392?hl=ko">YouTube 고객센터: 채널 수익 창출 정책</a></li>
+    <li>반복·대량생산 콘텐츠 규제 — <a href="https://ditoday.com/%EC%A0%80%ED%92%88%EC%A7%88-%EC%BD%98%ED%85%90%EC%B8%A0-%EC%88%98%EC%9D%B5-%EC%B0%BD%EC%B6%9C-%EC%A0%84%EB%A9%B4-%EC%B0%A8%EB%8B%A8-%EC%9C%A0%ED%8A%9C%EB%B8%8C-ai-%EC%8A%AC%EB%A1%AD-%EA%B7%9C/">디지털인사이트</a> · <a href="https://zdnet.co.kr/view/?no=20260415153646">ZDNet Korea</a> · <a href="https://carat.im/blog/youtube-ai-revenue-policy-analysis">캐럿 블로그</a></li>
+    <li>구글 scaled content abuse — <a href="https://www.gsqi.com/marketing-blog/august-2026-google-spam-update-case-studies/">GSQI 2026-08 스팸 업데이트 사례</a> · <a href="https://bulkbase.ai/seo/scaled-content-abuse-googles-policy-enforcement-how-to-stay-compliant-in-2026">BulkBase 정책 가이드</a></li>
+    <li>RPM 구간 — <a href="https://snsboost.kr/blog/44">SNS부스터 RPM·CPM 정리</a> · <a href="https://carat.im/blog/youtube-shorts-revenue-conditions-methods">쇼츠 수익창출 조건</a></li>
+    <li>영상 생성 단가 — <a href="https://www.atlascloud.ai/blog/guides/cheapest-ai-video-generation-api-2026">Atlas Cloud 2026 API 가격 비교</a> · <a href="https://wikidocs.net/blog/@openwiki/23493/">오픈위키 툴 비교</a></li>
+    <li>국내 강의 사례 — <a href="https://www.gosiweek.com/article/1065589921843399">머니몬스터 강의 후기 기사</a> · <a href="https://fastcampus.co.kr/data_online_aishorts">패스트캠퍼스 AI 쇼츠 패키지</a> · <a href="https://fastcampus.co.kr/open_sem_demosan">대모산개발단 오픈세미나</a></li>
+    <li>피해 통계 — <a href="https://www.mdtoday.co.kr/news/view/1065595245063274">소비자원 “고수익 보장 온라인 부업 강의, 1년 새 피해 4배”</a> · <a href="https://www.thepublic.kr/news/articleView.html?idxno=294760">더퍼블릭</a> · <a href="https://www.etoday.co.kr/news/view/2557709">이투데이</a></li>
+    <li>고액 강의 검증법 — <a href="http://www.digitallike.co.kr/22/?bmode=view&amp;idx=172119755">AI 자동화 쇼츠 강의의 함정</a></li>
+    <li>AI 인플루언서 수익 모델 — <a href="https://carat.im/blog/virtual-influencer-guide">버추얼 인플루언서 가이드</a> · <a href="https://www.openads.co.kr/content/contentDetail?contsId=19965">2026 인플루언서 마케팅 트렌드</a></li>
+    <li>대행 단가 — <a href="https://kmong.com/prices/ai-%EC%98%81%EC%83%81">크몽 AI 영상 견적</a> · <a href="https://kmong.com/article/3319--2026%EB%85%84-%EB%8C%80%ED%91%9C-%EC%99%B8%EC%A3%BC-%EB%8B%A8%EA%B0%80-%EA%B0%80%EC%9D%B4%EB%93%9C-|-%EB%94%94%EC%9E%90%EC%9D%B8-%EA%B0%9C%EB%B0%9C-%EB%A7%88%EC%BC%80%ED%8C%85-%EC%B9%B4%ED%85%8C%EA%B3%A0%EB%A6%AC%EB%B3%84-%EB%B9%84%EC%9A%A9-%EC%B4%9D%EC%A0%95%EB%A6%AC">2026 외주 단가 가이드</a></li>
+  </ul>
+
+  <p class="foot">
+    본 보고서는 공개 자료와 영상 자동 분석에 근거한 구조 분석이며, 특정 개인·업체의 위법을 단정하지 않는다.
+    금액·기간은 추정 구간이고 수익을 보장하지 않는다. 기준일 2026-09-20.
+  </p>
+</section>
+
+</main>
