@@ -1,0 +1,877 @@
+<meta charset="utf-8">
+<title>닉 워커 트레이닝 해부</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<style>
+:root{
+  --ground:#EDEEF0; --surface:#FFFFFF; --surface-2:#F5F6F8; --sunk:#E3E5E9;
+  --ink:#15181D; --ink-2:#454B55; --ink-3:#6E7681;
+  --rule:#D3D7DC; --rule-2:#C2C7CE;
+  --accent:#C8102E; --accent-ink:#C8102E; --accent-soft:#FAE8EB;
+  --blue:#1B4F9C; --amber:#C77A0A;
+  --ev1:#A8C2E6; --ev2:#5C89C8; --ev3:#1B4F9C;
+  --shadow:0 1px 2px rgba(21,24,29,.06), 0 8px 24px -16px rgba(21,24,29,.28);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#121418; --surface:#1A1D22; --surface-2:#20242B; --sunk:#0E1013;
+    --ink:#ECEEF1; --ink-2:#AEB5BF; --ink-3:#818893;
+    --rule:#2C313A; --rule-2:#3A414B;
+    --accent:#E8455F; --accent-ink:#F07487; --accent-soft:#33181D;
+    --blue:#5B93E0; --amber:#B87E22;
+    --ev1:#2E4A73; --ev2:#416FB0; --ev3:#5B93E0;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 28px -18px rgba(0,0,0,.9);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#121418; --surface:#1A1D22; --surface-2:#20242B; --sunk:#0E1013;
+  --ink:#ECEEF1; --ink-2:#AEB5BF; --ink-3:#818893;
+  --rule:#2C313A; --rule-2:#3A414B;
+  --accent:#E8455F; --accent-ink:#F07487; --accent-soft:#33181D;
+  --blue:#5B93E0; --amber:#B87E22;
+  --ev1:#2E4A73; --ev2:#416FB0; --ev3:#5B93E0;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 28px -18px rgba(0,0,0,.9);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--ground); color:var(--ink);
+  font-family:'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif;
+  font-size:16px; line-height:1.72; -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:900px; margin:0 auto; padding-inline:20px; padding-block:0 72px}
+
+/* ---------- type ---------- */
+.eyebrow{
+  font-family:'Oswald','IBM Plex Sans KR',sans-serif; font-weight:600;
+  font-size:.72rem; letter-spacing:.18em; text-transform:uppercase; color:var(--ink-3);
+  margin:0;
+}
+h1{
+  font-size:clamp(2.1rem,7vw,3.4rem); line-height:1.12; letter-spacing:-.025em;
+  font-weight:700; margin:.35em 0 .3em; text-wrap:balance;
+}
+h2{
+  font-size:clamp(1.3rem,3.6vw,1.72rem); line-height:1.28; letter-spacing:-.02em;
+  font-weight:700; margin:0; text-wrap:balance;
+}
+h3{font-size:1.02rem; font-weight:700; letter-spacing:-.01em; margin:0}
+p{margin:0 0 1em; color:var(--ink-2); max-width:62ch}
+p:last-child{margin-bottom:0}
+strong{color:var(--ink); font-weight:600}
+a{color:var(--accent-ink)}
+.num{font-family:'Oswald','IBM Plex Sans KR',sans-serif; font-variant-numeric:tabular-nums; font-weight:600}
+.mono{font-family:'IBM Plex Mono','IBM Plex Sans KR',monospace; font-variant-numeric:tabular-nums}
+
+/* ---------- header ---------- */
+header.hero{
+  border-bottom:1px solid var(--rule);
+  padding-block:clamp(40px,8vw,72px) clamp(28px,5vw,40px);
+}
+.tagline{font-size:1.05rem; color:var(--ink-2); max-width:56ch; margin:0}
+.kicker{
+  display:inline-flex; align-items:center; gap:.5em;
+  font-family:'Oswald','IBM Plex Sans KR',sans-serif; font-weight:600;
+  font-size:.74rem; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--accent-ink);
+}
+.kicker::before{content:""; width:26px; height:3px; background:var(--accent); border-radius:2px}
+
+.stats{
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(132px,1fr));
+  gap:1px; background:var(--rule); border:1px solid var(--rule); border-radius:8px;
+  overflow:hidden; margin-top:28px;
+}
+.stat{background:var(--surface); padding:14px 16px}
+.stat dt{
+  font-family:'Oswald','IBM Plex Sans KR',sans-serif; font-size:.68rem; font-weight:500;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--ink-3); margin:0 0 2px;
+}
+.stat dd{margin:0; font-size:1.18rem; font-weight:700; letter-spacing:-.01em; line-height:1.35}
+.stat dd span{font-size:.78rem; font-weight:500; color:var(--ink-3)}
+
+/* ---------- sections ---------- */
+section{padding-block:clamp(40px,7vw,60px); border-bottom:1px solid var(--rule)}
+section:last-of-type{border-bottom:0}
+.sec-head{display:flex; flex-direction:column; gap:6px; margin-bottom:26px}
+.sec-head p{margin:6px 0 0}
+
+/* ---------- principle cards ---------- */
+.principles{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:14px}
+.pr{
+  background:var(--surface); border:1px solid var(--rule); border-radius:8px;
+  padding:18px 18px 16px; display:flex; flex-direction:column; gap:8px;
+}
+.pr .tag{
+  align-self:flex-start; font-family:'Oswald','IBM Plex Sans KR',sans-serif;
+  font-size:.68rem; font-weight:600; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--accent-ink); background:var(--accent-soft); padding:3px 8px; border-radius:4px;
+}
+.pr p{font-size:.92rem; margin:0; color:var(--ink-2)}
+.pr .quote{
+  font-size:.88rem; color:var(--ink-3); border-left:2px solid var(--rule-2);
+  padding-left:10px; margin:2px 0 0;
+}
+
+/* ---------- split ---------- */
+.split-grid{display:grid; grid-template-columns:1fr; gap:18px}
+.plan{background:var(--surface); border:1px solid var(--rule); border-radius:8px; overflow:hidden}
+.plan.current{border-color:var(--accent); box-shadow:var(--shadow)}
+.plan-head{
+  display:flex; flex-wrap:wrap; align-items:baseline; gap:10px;
+  padding:14px 18px; border-bottom:1px solid var(--rule); background:var(--surface-2);
+}
+.plan-head .when{font-size:.8rem; color:var(--ink-3); margin-left:auto}
+.badge{
+  font-family:'Oswald','IBM Plex Sans KR',sans-serif; font-size:.66rem; font-weight:600;
+  letter-spacing:.12em; text-transform:uppercase; padding:3px 7px; border-radius:4px;
+}
+.badge.now{background:var(--accent); color:#fff}
+.badge.past{background:var(--sunk); color:var(--ink-3)}
+.days{display:grid; grid-template-columns:repeat(auto-fit,minmax(104px,1fr)); gap:1px; background:var(--rule)}
+.day{background:var(--surface); padding:12px 12px 14px; min-height:96px}
+.day .d{
+  font-family:'Oswald','IBM Plex Sans KR',sans-serif; font-size:.7rem; font-weight:600;
+  letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3);
+}
+.day .part{font-weight:700; font-size:.95rem; line-height:1.35; margin-top:3px}
+.day .note{font-size:.78rem; color:var(--ink-3); line-height:1.5; margin-top:4px}
+.day.rest{background:var(--surface-2)}
+.day.rest .part{color:var(--ink-3); font-weight:500}
+.day .bar{height:3px; border-radius:2px; margin-top:10px; background:var(--rule-2)}
+.day .bar.heavy{background:var(--accent)}
+.day .bar.mid{background:var(--blue)}
+.day .bar.light{background:var(--amber)}
+.plan-foot{padding:12px 18px; font-size:.85rem; color:var(--ink-3); border-top:1px solid var(--rule)}
+
+/* ---------- rest-pause diagram ---------- */
+.rp{background:var(--surface); border:1px solid var(--rule); border-radius:8px; padding:20px 18px}
+.rp-track{display:flex; align-items:flex-end; gap:2px; margin:18px 0 0; min-height:104px}
+.rp-block{
+  display:flex; flex-direction:column; justify-content:flex-end; gap:6px;
+  border-radius:4px 4px 0 0; padding:8px 6px 8px; color:#fff; text-align:center;
+  background:var(--accent);
+}
+.rp-block.b1{flex:8; height:100px}
+.rp-block.b2{flex:12; height:78px}
+.rp-block.b3{flex:15; height:56px}
+.rp-block .r{font-family:'Oswald','IBM Plex Sans KR',sans-serif; font-weight:700; font-size:1.15rem; line-height:1}
+.rp-block .l{font-size:.68rem; opacity:.92; line-height:1.3}
+.rp-rest{
+  flex:0 0 46px; height:34px; border-radius:4px; background:var(--sunk);
+  border:1px dashed var(--rule-2); display:flex; align-items:center; justify-content:center;
+  font-family:'IBM Plex Mono',monospace; font-size:.66rem; color:var(--ink-3); text-align:center; line-height:1.15;
+}
+.rp-axis{
+  display:flex; justify-content:space-between; gap:10px;
+  border-top:1px solid var(--rule); margin-top:0; padding-top:8px;
+  font-size:.76rem; color:var(--ink-3);
+}
+.rp-legend{display:flex; flex-wrap:wrap; gap:14px; margin-top:14px; font-size:.8rem; color:var(--ink-2)}
+.swatch{display:inline-block; width:11px; height:11px; border-radius:3px; margin-right:6px; vertical-align:-1px}
+
+/* ---------- volume dots ---------- */
+.vol{display:grid; grid-template-columns:repeat(auto-fit,minmax(215px,1fr)); gap:14px; margin-top:18px}
+.vol-item{background:var(--surface); border:1px solid var(--rule); border-radius:8px; padding:16px}
+.dots{display:flex; gap:5px; margin:10px 0 8px}
+.dot{width:16px; height:16px; border-radius:50%; border:2px solid var(--rule-2)}
+.dot.work{background:var(--blue); border-color:var(--blue)}
+.dot.fail{background:var(--accent); border-color:var(--accent)}
+.vol-item .cap{font-size:.82rem; color:var(--ink-3); margin:0}
+
+/* ---------- exercise library ---------- */
+.lib{display:grid; grid-template-columns:repeat(auto-fit,minmax(288px,1fr)); gap:14px}
+.card{background:var(--surface); border:1px solid var(--rule); border-radius:8px; overflow:hidden}
+.card-head{padding:14px 16px 12px; border-bottom:1px solid var(--rule); display:flex; align-items:center; gap:10px}
+.rail{width:4px; align-self:stretch; border-radius:2px; min-height:32px}
+.card-head .sub{font-size:.76rem; color:var(--ink-3); margin-left:auto; text-align:right; line-height:1.35}
+ul.ex{list-style:none; margin:0; padding:4px 0}
+ul.ex li{padding:9px 16px; border-bottom:1px solid var(--rule); display:flex; gap:12px; align-items:baseline}
+ul.ex li:last-child{border-bottom:0}
+ul.ex .name{font-size:.92rem; font-weight:500; color:var(--ink); flex:1}
+ul.ex .name em{display:block; font-style:normal; font-size:.78rem; color:var(--ink-3); line-height:1.45; margin-top:1px}
+ul.ex .rx{
+  font-family:'IBM Plex Mono',monospace; font-size:.76rem; color:var(--ink-2);
+  white-space:nowrap; background:var(--surface-2); border:1px solid var(--rule);
+  border-radius:4px; padding:2px 6px;
+}
+
+/* ---------- evidence / method table ---------- */
+.myth{
+  background:var(--surface); border:1px solid var(--rule); border-left:3px solid var(--blue);
+  border-radius:6px; padding:18px 20px; margin-bottom:22px;
+}
+.myth h3{margin:0 0 8px}
+.myth p{font-size:.92rem}
+.chain{
+  display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-top:14px;
+  font-size:.82rem;
+}
+.chain .node{
+  background:var(--surface-2); border:1px solid var(--rule); border-radius:5px;
+  padding:5px 10px; color:var(--ink-2);
+}
+.chain .node.cause{border-color:var(--blue); color:var(--ink); font-weight:600}
+.chain .node.sign{border-style:dashed; color:var(--ink-3)}
+.chain .arrow{color:var(--ink-3); font-family:'IBM Plex Mono',monospace}
+
+.methods{display:flex; flex-direction:column; gap:12px}
+.method{
+  background:var(--surface); border:1px solid var(--rule); border-radius:8px;
+  padding:16px 18px; display:grid; grid-template-columns:auto 1fr; gap:4px 14px;
+  align-items:start;
+}
+.method .rank{
+  font-family:'Oswald','IBM Plex Sans KR',sans-serif; font-weight:700; font-size:1.35rem;
+  color:var(--ink-3); line-height:1.1; grid-row:span 2; min-width:1.4em;
+  font-variant-numeric:tabular-nums;
+}
+.method .top{display:flex; flex-wrap:wrap; align-items:center; gap:8px 12px}
+.method h3{font-size:1rem}
+.method .en{font-size:.78rem; color:var(--ink-3); font-family:'IBM Plex Mono',monospace}
+.method p{font-size:.9rem; margin:6px 0 0; max-width:none}
+.method .howto{
+  font-size:.86rem; color:var(--ink-2); background:var(--surface-2);
+  border:1px solid var(--rule); border-radius:6px; padding:9px 12px; margin-top:10px;
+}
+.method .howto b{color:var(--ink)}
+
+/* ordinal evidence meter: one hue, light -> dark, always paired with a text label */
+.ev{display:inline-flex; align-items:center; gap:7px; margin-left:auto; white-space:nowrap}
+.ev .pips{display:inline-flex; gap:2px}
+.ev .pip{width:15px; height:7px; border-radius:2px; background:var(--sunk); border:1px solid var(--rule)}
+.ev.s3 .pip:nth-child(1){background:var(--ev1); border-color:var(--ev1)}
+.ev.s3 .pip:nth-child(2){background:var(--ev2); border-color:var(--ev2)}
+.ev.s3 .pip:nth-child(3){background:var(--ev3); border-color:var(--ev3)}
+.ev.s2 .pip:nth-child(1){background:var(--ev1); border-color:var(--ev1)}
+.ev.s2 .pip:nth-child(2){background:var(--ev2); border-color:var(--ev2)}
+.ev.s1 .pip:nth-child(1){background:var(--ev1); border-color:var(--ev1)}
+.ev .lab{
+  font-family:'Oswald','IBM Plex Sans KR',sans-serif; font-size:.7rem; font-weight:600;
+  letter-spacing:.1em; text-transform:uppercase; color:var(--ink-3);
+}
+.ev-key{
+  display:flex; flex-wrap:wrap; gap:16px; margin-bottom:18px; font-size:.8rem; color:var(--ink-3);
+  align-items:center;
+}
+
+.recipe{background:var(--surface); border:1px solid var(--rule); border-radius:8px; padding:18px; margin-top:20px}
+.recipe ol{margin:14px 0 0; padding-left:0; list-style:none; counter-reset:step}
+.recipe li{
+  counter-increment:step; position:relative; padding-left:34px; margin-bottom:12px;
+  font-size:.9rem; color:var(--ink-2);
+}
+.recipe li:last-child{margin-bottom:0}
+.recipe li::before{
+  content:counter(step); position:absolute; left:0; top:1px;
+  width:22px; height:22px; border-radius:50%; background:var(--accent); color:#fff;
+  font-family:'Oswald','IBM Plex Sans KR',sans-serif; font-size:.78rem; font-weight:600;
+  display:flex; align-items:center; justify-content:center;
+}
+.recipe li b{color:var(--ink)}
+
+/* ---------- macro chart ---------- */
+.diet{display:grid; grid-template-columns:1fr; gap:18px}
+.chart{background:var(--surface); border:1px solid var(--rule); border-radius:8px; padding:20px 18px}
+.chart-title{font-size:.95rem; font-weight:700; margin:0}
+.chart-sub{font-size:.8rem; color:var(--ink-3); margin:3px 0 0}
+.macro-bar{display:flex; gap:2px; margin:18px 0 0; height:42px; border-radius:4px; overflow:hidden}
+.seg{position:relative; display:flex; align-items:center; justify-content:center; cursor:default}
+.seg span{
+  font-family:'Oswald','IBM Plex Sans KR',sans-serif; font-weight:600; font-size:.82rem; color:#fff;
+}
+.seg.p{background:var(--accent)} .seg.c{background:var(--blue)} .seg.f{background:var(--amber)}
+.macro-legend{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin-top:16px}
+.ml{display:flex; gap:9px; align-items:flex-start; font-size:.85rem}
+.ml .k{color:var(--ink); font-weight:600}
+.ml .v{display:block; color:var(--ink-3); font-size:.8rem; line-height:1.45}
+.meals{background:var(--surface); border:1px solid var(--rule); border-radius:8px; padding:18px}
+.meals ol{margin:12px 0 0; padding-left:1.15em; color:var(--ink-2); font-size:.9rem}
+.meals li{margin-bottom:7px}
+.meals li:last-child{margin-bottom:0}
+
+/* ---------- glossary ---------- */
+.gloss{display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:1px; background:var(--rule); border:1px solid var(--rule); border-radius:8px; overflow:hidden}
+.gl{background:var(--surface); padding:16px 18px}
+.gl .term{font-weight:700; font-size:.98rem; letter-spacing:-.01em}
+.gl .roots{
+  font-family:'IBM Plex Mono',monospace; font-size:.76rem; color:var(--accent-ink);
+  margin:5px 0 6px; line-height:1.55;
+}
+.gl p{font-size:.86rem; margin:0; color:var(--ink-2)}
+
+/* ---------- takeaways ---------- */
+.take{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:14px}
+.take-col{background:var(--surface); border:1px solid var(--rule); border-radius:8px; padding:18px}
+.take-col.keep{border-top:3px solid var(--blue)}
+.take-col.drop{border-top:3px solid var(--accent)}
+.take-col ul{margin:12px 0 0; padding-left:1.1em; font-size:.9rem; color:var(--ink-2)}
+.take-col li{margin-bottom:8px}
+.take-col li:last-child{margin-bottom:0}
+.warn{
+  margin-top:16px; background:var(--accent-soft); border:1px solid var(--rule);
+  border-left:3px solid var(--accent); border-radius:6px; padding:14px 16px;
+  font-size:.88rem; color:var(--ink-2);
+}
+.warn strong{color:var(--ink)}
+
+/* ---------- sources ---------- */
+.sources{font-size:.84rem; color:var(--ink-3)}
+.sources ul{margin:10px 0 0; padding-left:1.1em}
+.sources li{margin-bottom:5px}
+
+/* ---------- tooltip ---------- */
+#tip{
+  position:fixed; z-index:50; pointer-events:none; opacity:0; transform:translate(-50%,-115%);
+  background:var(--ink); color:var(--ground); border-radius:6px; padding:6px 10px;
+  font-size:.78rem; line-height:1.45; white-space:nowrap; transition:opacity .12s ease;
+  box-shadow:0 6px 20px -8px rgba(0,0,0,.5);
+}
+#tip.on{opacity:1}
+
+@media (max-width:560px){
+  .rp-rest{flex:0 0 38px; font-size:.6rem}
+  .rp-block{padding:6px 3px}
+  .rp-block .l{font-size:.62rem}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important}}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+</style>
+
+<div class="wrap">
+
+<header class="hero">
+  <span class="kicker">IFBB Pro · Men's Open</span>
+  <h1>닉 워커 트레이닝 해부</h1>
+  <p class="tagline">유튜브 채널 <strong>@NickWalker39</strong>에 올라온 풀 트레이닝 세션과 인터뷰를 훑어, “더 뮤턴트”가 실제로 쓰는 분할·세트 구조·부위별 종목·식단을 한 장으로 정리했습니다. 여기에 그 기법들이 왜 통하는지 <strong>2025~2026 연구 근거</strong>를 덧붙였습니다. 2026년 9월 기준입니다.</p>
+
+  <dl class="stats">
+    <div class="stat"><dt>Height</dt><dd class="num">170<span> cm</span></dd></div>
+    <div class="stat"><dt>Weight</dt><dd class="num">113–134<span> kg</span></dd></div>
+    <div class="stat"><dt>Arms</dt><dd class="num">22.75<span> in (≈58cm)</span></dd></div>
+    <div class="stat"><dt>Best Olympia</dt><dd class="num">3<span>위 · 2022</span></dd></div>
+    <div class="stat"><dt>2026 Season</dt><dd class="num">1<span>위 탬파 프로</span></dd></div>
+  </dl>
+</header>
+
+<!-- 1. 핵심 원칙 -->
+<section>
+  <div class="sec-head">
+    <p class="eyebrow">01 — Training Philosophy</p>
+    <h2>다섯 줄로 끝내는 닉 워커식 훈련</h2>
+    <p>“무거운 무게를 드는 사람”이라는 이미지와 달리, 지금의 닉 워커는 <strong>가벼운 무게 · 적은 세트 · 지독한 한 세트</strong>에 가깝습니다. 2023년 햄스트링 파열이 방향을 바꿔 놓았습니다.</p>
+  </div>
+
+  <div class="principles">
+    <article class="pr">
+      <span class="tag">Machine First</span>
+      <h3>머신 위주, 관절은 아낀다</h3>
+      <p>햄스트링 파열 이후 프리웨이트 비중을 줄이고 머신·케이블로 이동. 가동 범위 내내 <strong>장력이 끊기지 않는(constant tension)</strong> 기구를 고릅니다.</p>
+    </article>
+    <article class="pr">
+      <span class="tag">Low Volume</span>
+      <h3>종목당 본세트는 2개뿐</h3>
+      <p>감 잡는 적응 세트 1개 + 본세트 2개 정도. 그중 <strong>진짜 실패지점까지 가는 건 1~2세트</strong>. 세트 수를 늘리는 대신 한 세트의 밀도를 올립니다.</p>
+    </article>
+    <article class="pr">
+      <span class="tag">Rest-Pause</span>
+      <h3>실패해도 세트는 안 끝난다</h3>
+      <p>실패지점 → 15~20초 휴식 → 다시 반복 → 짧은 휴식 → 마지막 push. 한 세트를 3덩어리로 쪼개 총 반복수를 끌어올립니다.</p>
+    </article>
+    <article class="pr">
+      <span class="tag">RIR</span>
+      <h3>매번 실패까지는 안 간다</h3>
+      <p>모든 세션을 실패로 끝내면 회복이 무너져 빈도가 떨어진다고 봅니다. 일부러 <strong>여유 반복(RIR)</strong>을 남기는 날을 섞습니다.</p>
+    </article>
+    <article class="pr">
+      <span class="tag">Contraction</span>
+      <h3>무게보다 수축</h3>
+      <p>가슴은 팔꿈치 각도가 자극을 결정한다고 말합니다. 2025~2026 시즌 키워드는 <strong>엄격한 자세 · 최대 수축 · 긴장 지속 시간</strong>.</p>
+      <p class="quote">“무게 때문에 자세를 포기하지 마라. 결국 수축이 전부다.”</p>
+    </article>
+  </div>
+</section>
+
+<!-- 2. 분할 -->
+<section>
+  <div class="sec-head">
+    <p class="eyebrow">02 — Weekly Split</p>
+    <h2>분할은 5일에서 4일로 줄었다</h2>
+    <p>2026 아놀드 클래식 준비 과정에서 코치와 결별하고 스스로 프로그램을 짜면서, <strong>도리안 예이츠 스타일의 4일 분할</strong>로 갈아탔습니다. “내 커리어를 만든 뿌리로 돌아간다”는 게 본인 설명입니다.</p>
+  </div>
+
+  <div class="split-grid">
+    <div class="plan current">
+      <div class="plan-head">
+        <span class="badge now">Current</span>
+        <h3>4일 분할 · 도리안 예이츠 스타일</h3>
+        <span class="when">2026 아놀드 클래식 프렙 ~ 현재</span>
+      </div>
+      <div class="days">
+        <div class="day"><div class="d">Day 1</div><div class="part">가슴 + 이두</div><div class="note">밀기와 당기기를 한 세션에</div><div class="bar heavy"></div></div>
+        <div class="day"><div class="d">Day 2</div><div class="part">등</div><div class="note">등 단독, 세션 전체를 두께·너비에</div><div class="bar heavy"></div></div>
+        <div class="day"><div class="d">Day 3 · 목</div><div class="part">어깨 + 삼두</div><div class="note">끝에 등·가슴 가볍게 터치업</div><div class="bar mid"></div></div>
+        <div class="day"><div class="d">Day 4 · 금</div><div class="part">하체</div><div class="note">주중 마지막, 가장 긴 세션</div><div class="bar heavy"></div></div>
+        <div class="day rest"><div class="d">Sat · Sun</div><div class="part">완전 휴식</div><div class="note">주말은 통째로 비움</div><div class="bar"></div></div>
+      </div>
+      <p class="plan-foot">핵심은 <strong>주 4일 · 주말 오프</strong>. 세션 수를 줄이고 회복을 길게 가져가되, 하루 안에서 강도를 끝까지 씁니다.</p>
+    </div>
+
+    <div class="plan">
+      <div class="plan-head">
+        <span class="badge past">Previous</span>
+        <h3>5일 분할</h3>
+        <span class="when">2025 시즌 ~ 2026 초</span>
+      </div>
+      <div class="days">
+        <div class="day"><div class="d">×2 / 주</div><div class="part">하체</div><div class="note">대퇴사두 데이 + 햄스트링 데이로 목적 분리</div><div class="bar heavy"></div></div>
+        <div class="day"><div class="d">×2 / 주</div><div class="part">가슴</div><div class="note">두 세션의 목표가 서로 다름</div><div class="bar mid"></div></div>
+        <div class="day"><div class="d">×1 / 주</div><div class="part">등</div><div class="note">수직·수평 당기기 모두</div><div class="bar mid"></div></div>
+        <div class="day"><div class="d">×1 / 주</div><div class="part">어깨</div><div class="note">프레스보다 래터럴 중심</div><div class="bar light"></div></div>
+        <div class="day"><div class="d">×1 / 주</div><div class="part">팔</div><div class="note">중간 무게 + 고볼륨</div><div class="bar light"></div></div>
+      </div>
+      <p class="plan-foot">같은 부위가 다시 오기까지 <strong>3~4일 회복</strong>을 확보하도록 배치. 부위를 주 2회 치더라도 세션마다 목적을 다르게 뒀습니다.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 3. 세트 구조 -->
+<section>
+  <div class="sec-head">
+    <p class="eyebrow">03 — Set Architecture</p>
+    <h2>한 세트를 어떻게 쪼개는가</h2>
+    <p>닉 워커 영상에서 실제로 반복해서 나오는 구조입니다. 마지막 세트 하나에 모든 게 걸려 있습니다.</p>
+  </div>
+
+  <div class="rp">
+    <h3 class="chart-title">하체 마지막 세트 — 레스트포즈 3덩어리</h3>
+    <p class="chart-sub">막대 높이 = 남은 힘, 막대 폭 = 그 구간에서 해낸 반복 수. 총 34회를 한 세트로 묶습니다.</p>
+    <div class="rp-track">
+      <div class="rp-block b1" data-tip="1구간 · 8회 — 여기서 이미 실패지점">
+        <span class="r">8</span><span class="l">실패까지</span>
+      </div>
+      <div class="rp-rest" data-tip="15~20초만 쉰다 — 세트는 끝나지 않았다">15–20<br>sec</div>
+      <div class="rp-block b2" data-tip="2구간 · 11~12회 — 짧은 휴식만으로 되살아난 반복">
+        <span class="r">11–12</span><span class="l">재개</span>
+      </div>
+      <div class="rp-rest" data-tip="다시 짧은 정지">짧은<br>정지</div>
+      <div class="rp-block b3" data-tip="3구간 · 15회 — 무게를 줄여 끝까지 짜낸다">
+        <span class="r">15</span><span class="l">마지막 push</span>
+      </div>
+    </div>
+    <div class="rp-axis"><span>세트 시작</span><span>세트 종료 · 누적 34회</span></div>
+    <div class="rp-legend">
+      <span><i class="swatch" style="background:var(--accent)"></i>반복 구간</span>
+      <span><i class="swatch" style="background:var(--sunk); border:1px dashed var(--rule-2)"></i>짧은 휴식</span>
+    </div>
+  </div>
+
+  <div class="rp" style="margin-top:14px">
+    <h3 class="chart-title">와이드 그립 랫 풀다운 버전</h3>
+    <p class="chart-sub">등에서는 휴식 대신 <strong>스트레치 포지션에서 버티기</strong>를 씁니다.</p>
+    <div class="rp-track" style="min-height:92px">
+      <div class="rp-block b3" style="flex:15; height:92px" data-tip="15회 — 실패까지"><span class="r">15</span><span class="l">실패까지</span></div>
+      <div class="rp-rest" data-tip="늘어난 상태로 15초 버티기 (휴식 아님)">스트레치<br>15초</div>
+      <div class="rp-block b1" style="flex:5; height:64px" data-tip="5회 추가"><span class="r">5</span><span class="l">추가</span></div>
+      <div class="rp-rest" data-tip="다시 버티기">스트레치<br>정지</div>
+      <div class="rp-block b1" style="flex:5; height:44px" data-tip="마지막 5회"><span class="r">5</span><span class="l">마무리</span></div>
+    </div>
+    <div class="rp-axis"><span>세트 시작</span><span>누적 25회</span></div>
+  </div>
+
+  <div class="vol">
+    <div class="vol-item">
+      <h3>종목당 세트 구성</h3>
+      <div class="dots" aria-hidden="true">
+        <span class="dot"></span><span class="dot work"></span><span class="dot fail"></span>
+      </div>
+      <p class="cap">적응 1세트(빈 원) → 본세트 1(파랑) → 실패 세트 1(빨강). 세트를 늘리는 게 아니라 마지막 하나를 끝까지 씁니다.</p>
+    </div>
+    <div class="vol-item">
+      <h3>세트 간 휴식</h3>
+      <div class="dots" aria-hidden="true"><span class="dot work"></span><span class="dot work"></span><span class="dot fail"></span></div>
+      <p class="cap">워밍업 <span class="mono">45–90초</span>, 본세트 <span class="mono">1–3분</span>. 레스트포즈 안쪽의 15~20초와는 완전히 다른 층위의 휴식입니다.</p>
+    </div>
+    <div class="vol-item">
+      <h3>반복수 범위</h3>
+      <div class="dots" aria-hidden="true"><span class="dot fail"></span><span class="dot fail"></span><span class="dot work"></span></div>
+      <p class="cap">대부분 <span class="mono">8–15회</span>. 다리는 예외적으로 <span class="mono">30회</span> 올아웃 세트를 넣습니다.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 4. 부위별 종목 -->
+<section>
+  <div class="sec-head">
+    <p class="eyebrow">04 — Exercise Library</p>
+    <h2>부위별로 실제 쓰는 종목</h2>
+    <p>영상에 반복적으로 등장하는 종목만 추렸습니다. 오른쪽 표기는 <strong>본세트 × 반복수</strong> 기준입니다.</p>
+  </div>
+
+  <div class="lib">
+    <article class="card">
+      <div class="card-head">
+        <span class="rail" style="background:var(--accent)"></span>
+        <h3>가슴 · 푸시</h3>
+        <span class="sub">팔꿈치 각도가<br>자극을 결정</span>
+      </div>
+      <ul class="ex">
+        <li><span class="name">인클라인 덤벨 프레스<em>한쪽 약 59kg(130lb)까지. 먼저 자세, 그다음 무게</em></span><span class="rx">2–3 × 8–12</span></li>
+        <li><span class="name">시티드 체스트 플라이 머신<em>뉴트럴 그립으로 수축 구간을 길게</em></span><span class="rx">2 × 10–15</span></li>
+        <li><span class="name">덤벨 사이드 래터럴 레이즈<em>푸시 데이에도 측면 삼각근을 끼워 넣음</em></span><span class="rx">3–4 × 12–15</span></li>
+        <li><span class="name">딥 머신<em>팔을 끝까지 펴 삼두 장력 유지, 천천히 통제</em></span><span class="rx">2 × 10–15</span></li>
+        <li><span class="name">케이블 트라이셉스 푸시다운<em>로프로 팔꿈치 워밍업부터</em></span><span class="rx">3 × 12–15</span></li>
+        <li><span class="name">바벨 스컬크러셔<em>푸시 데이 마무리</em></span><span class="rx">2–3 × 10–12</span></li>
+      </ul>
+    </article>
+
+    <article class="card">
+      <div class="card-head">
+        <span class="rail" style="background:var(--blue)"></span>
+        <h3>등 · 풀</h3>
+        <span class="sub">수직 = 너비<br>수평 = 두께</span>
+      </div>
+      <ul class="ex">
+        <li><span class="name">와이드 그립 랫 풀다운<em>마지막 세트는 드롭세트 또는 스트레치 정지</em></span><span class="rx">2–3 × 10–12</span></li>
+        <li><span class="name">T바 로우 (플레이트 머신)<em>실패까지, 레스트포즈 적용</em></span><span class="rx">2–4 × 10–12</span></li>
+        <li><span class="name">체스트 서포티드 인클라인 머신 로우<em>1회 남기고 멈춘 뒤 20초 휴식 → 재개</em></span><span class="rx">2 × 10–12</span></li>
+        <li><span class="name">케이블 / 머신 풀오버<em>광배 단독 자극, 팔 개입 최소화</em></span><span class="rx">2–3 × 12–15</span></li>
+        <li><span class="name">원암 덤벨 로우<em>좌우 불균형 정리용</em></span><span class="rx">2 × 10–12</span></li>
+      </ul>
+    </article>
+
+    <article class="card">
+      <div class="card-head">
+        <span class="rail" style="background:var(--amber)"></span>
+        <h3>어깨 · 팔</h3>
+        <span class="sub">오버헤드 프레스<br>거의 안 함</span>
+      </div>
+      <ul class="ex">
+        <li><span class="name">시티드 덤벨 래터럴 레이즈<em>앉아서 반동 제거, 측면 삼각근만 고립</em></span><span class="rx">3–4 × 12–15</span></li>
+        <li><span class="name">인클라인 리버스 덤벨 플라이<em>고 존 메도우스가 즐겨 쓰던 후면 삼각근 종목</em></span><span class="rx">3 × 15</span></li>
+        <li><span class="name">바벨 컬 21s<em>하단 7 + 상단 7 + 전체 7</em></span><span class="rx">2–3 × 21</span></li>
+        <li><span class="name">머신 프리처 컬 / 케이블 컬<em>이두는 중간 무게 + 고볼륨이 잘 먹힌다고 판단</em></span><span class="rx">3 × 12–15</span></li>
+        <li><span class="name">해머 컬<em>가볍게 30회로 펌핑 마감</em></span><span class="rx">2 × 30</span></li>
+        <li><span class="name">크로스바디 푸시다운<em>무겁게 가지 말 것 — 스퀴즈와 수축에 집중</em></span><span class="rx">2–3 × 15</span></li>
+      </ul>
+    </article>
+
+    <article class="card">
+      <div class="card-head">
+        <span class="rail" style="background:var(--accent)"></span>
+        <h3>하체</h3>
+        <span class="sub">2023 햄스트링 파열<br>이후 머신 중심</span>
+      </div>
+      <ul class="ex">
+        <li><span class="name">시티드 레그 컬<em>10회에서 실패할 무게까지 올린 뒤, 무게 낮춰 2세트 추가</em></span><span class="rx">3 × 10–15</span></li>
+        <li><span class="name">레그 프레스<em>발을 낮게 어깨너비. 천천히 내려 바닥에서 잠깐 정지 → 폭발적으로</em></span><span class="rx">3 × ~30 올아웃</span></li>
+        <li><span class="name">핵 스쿼트<em>대퇴사두 데이의 메인</em></span><span class="rx">2–3 × 10–12</span></li>
+        <li><span class="name">레그 어브덕션 머신<em>느린 반복으로 둔근·외측 자극</em></span><span class="rx">3 × 15–20</span></li>
+        <li><span class="name">토처 스쿼트 머신<em>세션 마무리, 풀 가동 범위 강조</em></span><span class="rx">2 × 10–15</span></li>
+      </ul>
+    </article>
+  </div>
+</section>
+
+<!-- 5. 고립 · 펌핑 -->
+<section>
+  <div class="sec-head">
+    <p class="eyebrow">05 — Isolation &amp; Pump</p>
+    <h2>고립과 펌핑을 더 효과적으로 만드는 법</h2>
+    <p>닉 워커가 쓰는 기법들이 <strong>왜 통하는지</strong>를 2025~2026년 최신 연구 기준으로 정리했습니다. 근거가 강한 것부터 순서대로 놓았습니다.</p>
+  </div>
+
+  <div class="myth">
+    <h3>먼저 정리할 오해 — 펌핑은 원인이 아니라 지표다</h3>
+    <p>최근 리뷰들은 일관되게 <strong>기계적 장력(mechanical tension)이 근비대의 1차 동인</strong>이라고 봅니다. 대사산물 축적과 세포 팽창, 즉 우리가 “펌핑”이라 부르는 것은 인과 근거가 약하고 기여도도 간접적이라는 게 현재 결론입니다.</p>
+    <p>그런데도 펌핑을 쫓는 게 완전히 헛되지 않은 이유는, <strong>펌핑이 잘 오는 조건과 장력을 오래 유지하는 조건이 겹치기 때문</strong>입니다. 지속 장력 · 실패 근접 · 짧은 휴식 · 고립 자세 — 이것들이 장력을 만들고, 그 부산물로 펌핑이 옵니다. 펌핑을 목표로 삼지 말고, <em>장력이 제대로 걸렸다는 신호</em>로 읽으세요.</p>
+    <div class="chain">
+      <span class="node cause">기계적 장력</span>
+      <span class="arrow">→</span>
+      <span class="node">근비대</span>
+      <span class="arrow" style="margin-left:6px">/</span>
+      <span class="node cause">장력 유지 조건</span>
+      <span class="arrow">→</span>
+      <span class="node sign">펌핑 (신호일 뿐)</span>
+    </div>
+  </div>
+
+  <div class="ev-key">
+    <span><strong style="color:var(--ink)">근거 강도</strong> — 무작위 대조군 연구·메타분석 기준</span>
+    <span><span class="ev s3"><span class="pips"><span class="pip"></span><span class="pip"></span><span class="pip"></span></span><span class="lab">강</span></span></span>
+    <span><span class="ev s2"><span class="pips"><span class="pip"></span><span class="pip"></span><span class="pip"></span></span><span class="lab">중</span></span></span>
+    <span><span class="ev s1"><span class="pips"><span class="pip"></span><span class="pip"></span><span class="pip"></span></span><span class="lab">약</span></span></span>
+  </div>
+
+  <div class="methods">
+
+    <article class="method">
+      <div class="rank">01</div>
+      <div class="top">
+        <h3>늘어난 구간 편향</h3>
+        <span class="en">Lengthened partials</span>
+        <span class="ev s3"><span class="pips"><span class="pip"></span><span class="pip"></span><span class="pip"></span></span><span class="lab">강</span></span>
+      </div>
+      <div>
+        <p>근육이 <strong>늘어난 상태에서 수축</strong>할 때 개별 섬유가 받는 장력이 가장 큽니다. 2025년 Wolf 등의 8주 상체 연구에서 늘어난 구간 부분반복은 전 가동범위와 <strong>동등한</strong> 성장을 냈고, 15개 기관 다중 검증 연구도 같은 결론에 도달했습니다. 일부 체계적 고찰은 긴 근육 길이 훈련이 더 유리하다고 보지만 아직 혼재합니다.</p>
+        <p class="howto"><b>실전 —</b> 전 가동범위를 기본으로 두고, <b>마지막 세트가 실패한 뒤 늘어난 구간에서만 부분반복</b>을 더 붙입니다. 인클라인 덤벨 컬, 오버헤드 트라이셉스 익스텐션, 시티드 레그컬, 몸 앞으로 크로스한 케이블 래터럴이 대표적입니다. 전 가동범위를 통째로 대체하지는 마세요.</p>
+      </div>
+    </article>
+
+    <article class="method">
+      <div class="rank">02</div>
+      <div class="top">
+        <h3>저항 프로파일 맞추기</h3>
+        <span class="en">Resistance profile · cable &amp; machine</span>
+        <span class="ev s2"><span class="pips"><span class="pip"></span><span class="pip"></span><span class="pip"></span></span><span class="lab">중</span></span>
+      </div>
+      <div>
+        <p>프리웨이트는 중력 방향이 고정이라 관절 각도에 따라 장력이 사라지는 구간이 생깁니다. 케이블·머신은 늘어난 구간부터 수축 구간까지 <strong>장력이 끊기지 않습니다</strong>. 볼륨과 강도를 맞추면 전체 성장은 대등하지만, 고립 종목에서는 케이블 쪽이 유리합니다.</p>
+        <p class="howto"><b>실전 —</b> 래터럴 레이즈 · 리어델트 · 플라이처럼 <b>중력이 자극을 깎아먹는 종목</b>은 케이블로. 닉 워커가 부상 이후 머신으로 옮긴 선택이 정확히 이 원리 위에 있습니다. 다만 도구를 섞을수록 자극 각도가 다양해져 발달이 고릅니다.</p>
+      </div>
+    </article>
+
+    <article class="method">
+      <div class="rank">03</div>
+      <div class="top">
+        <h3>혈류제한 훈련</h3>
+        <span class="en">BFR · Blood Flow Restriction</span>
+        <span class="ev s3"><span class="pips"><span class="pip"></span><span class="pip"></span><span class="pip"></span></span><span class="lab">강</span></span>
+      </div>
+      <div>
+        <p>1RM의 <strong>20~30% 저부하</strong>로도 고부하(&gt;70% 1RM) 훈련과 대등한 비대를 냅니다. 메타분석에서 일관되게 저부하 단독보다 확실히 우위입니다. 국소 저산소 환경이 대사산물을 쌓고 속근 섬유 동원을 끌어올리는 것이 기전으로 설명됩니다.</p>
+        <p class="howto"><b>실전 —</b> 사지 근위부에 커프를 감고 <b>110~240 mmHg</b> 범위. 다만 고정 압력은 사람마다 자극 편차가 커서, 최근 연구는 개인별 <b>동맥폐색압(AOP)</b> 기준 설정을 권합니다. 관절 통증이나 부상으로 고중량이 막혔을 때의 대안이지, 기본 훈련의 대체재가 아닙니다.</p>
+      </div>
+    </article>
+
+    <article class="method">
+      <div class="rank">04</div>
+      <div class="top">
+        <h3>레스트포즈 · 클러스터 세트</h3>
+        <span class="en">Rest-pause · cluster sets</span>
+        <span class="ev s2"><span class="pips"><span class="pip"></span><span class="pip"></span><span class="pip"></span></span><span class="lab">중</span></span>
+      </div>
+      <div>
+        <p>레스트포즈와 드롭세트는 <strong>고역치 운동단위의 동원 상태를 길게 유지</strong>시킵니다. 클러스터 세트는 반대로 피로를 분산시켜 반복의 질과 최고 힘을 지켜냅니다. 목적이 다른 두 도구입니다.</p>
+        <p class="howto"><b>실전 —</b> 닉 워커의 15~20초 레스트포즈가 바로 앞쪽입니다. <b>동원 유지가 목적이면 레스트포즈, 폼 유지가 목적이면 클러스터</b>로 나눠 쓰세요. 한 종목에 둘을 같이 쓰면 회복이 못 따라옵니다.</p>
+      </div>
+    </article>
+
+    <article class="method">
+      <div class="rank">05</div>
+      <div class="top">
+        <h3>마인드-머슬 커넥션</h3>
+        <span class="en">Internal attentional focus</span>
+        <span class="ev s2"><span class="pips"><span class="pip"></span><span class="pip"></span><span class="pip"></span></span><span class="lab">중</span></span>
+      </div>
+      <div>
+        <p>Schoenfeld 2018 연구(비훈련 남성 30명, 8주)에서 내적 집중 그룹의 팔꿈치 굴근 두께는 <strong>12.4%</strong> 증가해 외적 집중 그룹의 6.9%를 앞섰습니다. 그런데 <strong>대퇴사두에서는 차이가 없었습니다</strong>. 효과가 부위와 종목을 탄다는 뜻입니다.</p>
+        <p class="howto"><b>실전 —</b> 래터럴 · 컬 · 푸시다운 · 레그컬 · 레그익스텐션 · 플라이 · 로우 · 힙스러스트 · 카프처럼 <b>한 근육에만 부하를 거는 고립 종목에서만</b> 씁니다. 무거운 복합 종목에서는 외적 집중(바를 밀어낸다)이 오히려 낫습니다. <b>한계</b> — 관련 연구 대부분이 EMG 기반인데, EMG 진폭은 장력도 미래 성장도 아닙니다.</p>
+      </div>
+    </article>
+
+    <article class="method">
+      <div class="rank">06</div>
+      <div class="top">
+        <h3>드롭세트</h3>
+        <span class="en">Drop sets</span>
+        <span class="ev s2"><span class="pips"><span class="pip"></span><span class="pip"></span><span class="pip"></span></span><span class="lab">중</span></span>
+      </div>
+      <div>
+        <p>메타분석 결론은 명확합니다 — 드롭세트와 전통적 세트의 <strong>비대 효과 차이는 없습니다</strong>. 대신 일부 방식은 훈련 시간을 <strong>1/2~1/3</strong>로 줄입니다. 즉 “더 좋은” 기법이 아니라 <strong>“더 빠른”</strong> 기법입니다.</p>
+        <p class="howto"><b>실전 —</b> 시간이 없을 때 쓰는 압축 도구로 생각하세요. 종목마다 붙이지 말고 <b>마지막 세트 하나에만</b>. 감량 단계처럼 회복 여력이 줄어든 시기에는 빈도를 더 낮춰야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="method">
+      <div class="rank">07</div>
+      <div class="top">
+        <h3>사전피로 · 슈퍼세트</h3>
+        <span class="en">Pre-exhaust · supersets</span>
+        <span class="ev s1"><span class="pips"><span class="pip"></span><span class="pip"></span><span class="pip"></span></span><span class="lab">약</span></span>
+      </div>
+      <div>
+        <p>고립 종목으로 먼저 지치게 한 뒤 복합 종목으로 넘어가는 방식입니다. 오래된 기법이지만 <strong>성장 우위를 입증한 메타분석 근거는 얇습니다</strong>. 여러 세트 전략을 비교한 연구에서도 드롭세트 쪽이 더 나은 결과를 보였습니다.</p>
+        <p class="howto"><b>실전 —</b> <b>시간 절약 목적</b>이라면 쓸 만합니다. “고립으로 먼저 태워야 더 큰다”는 주장은 아직 근거가 받쳐주지 않으니, 이걸 프로그램의 중심에 놓지는 마세요.</p>
+      </div>
+    </article>
+
+  </div>
+
+  <div class="recipe">
+    <h3>고립 종목 한 세트, 이렇게 조립한다</h3>
+    <p style="font-size:.88rem; margin:6px 0 0">위 기법들을 한 세트 안에 욱여넣지 않고 순서대로 배치한 형태입니다.</p>
+    <ol>
+      <li><b>전 가동범위 10~12회</b> — 실패까지 1~2회 남기고 멈춤(RIR 1~2). 여기까지가 본세트의 몸통입니다.</li>
+      <li><b>늘어난 구간에서 쉬지 않기</b> — 맨 아래에서 힘을 빼는 순간 장력이 끊깁니다. 장력 유지가 곧 자극입니다.</li>
+      <li><b>고립 종목에서만 내적 집중</b> — 해당 근육의 수축을 의식적으로 좇습니다. 복합 고중량에서는 하지 마세요.</li>
+      <li><b>마지막 세트만 강화 기법 하나</b> — 레스트포즈 <em>또는</em> 드롭 <em>또는</em> 늘어난 구간 부분반복. <b>셋 중 하나만</b>입니다.</li>
+      <li><b>펌핑은 채점표가 아니다</b> — 펌핑이 덜 와도 장력·반복·중량이 올라갔다면 그 세션은 성공입니다.</li>
+    </ol>
+  </div>
+</section>
+
+<!-- 6. 식단 -->
+<section>
+  <div class="sec-head">
+    <p class="eyebrow">06 — Fuel</p>
+    <h2>하루 3,857 kcal · 5끼</h2>
+    <p>훈련만큼이나 단순합니다. <strong>고단백 · 고탄수 · 저지방</strong>을 매일 똑같이 반복하고, 가끔 치팅밀로 숨통을 틉니다. 오프시즌에는 6끼 4,567 kcal까지 올라간 날도 공개했습니다.</p>
+  </div>
+
+  <div class="diet">
+    <div class="chart">
+      <h3 class="chart-title">열량 기준 매크로 구성 · 2026 시즌</h3>
+      <p class="chart-sub">총 3,857 kcal 중 각 영양소가 차지하는 열량 비중</p>
+      <div class="macro-bar" role="img" aria-label="탄수화물 45퍼센트, 단백질 35퍼센트, 지방 20퍼센트">
+        <div class="seg c" style="flex:45.2" data-tip="탄수화물 430g · 1,720 kcal · 45%"><span>탄수 45%</span></div>
+        <div class="seg p" style="flex:34.7" data-tip="단백질 330g · 1,320 kcal · 35%"><span>단백 35%</span></div>
+        <div class="seg f" style="flex:20.1" data-tip="지방 85g · 765 kcal · 20%"><span>지방 20%</span></div>
+      </div>
+      <div class="macro-legend">
+        <div class="ml"><i class="swatch" style="background:var(--blue)"></i><span class="k">탄수화물 430 g<span class="v">1,720 kcal · 45.2%</span></span></div>
+        <div class="ml"><i class="swatch" style="background:var(--accent)"></i><span class="k">단백질 330 g<span class="v">1,320 kcal · 34.7%</span></span></div>
+        <div class="ml"><i class="swatch" style="background:var(--amber)"></i><span class="k">지방 85 g<span class="v">765 kcal · 20.1%</span></span></div>
+      </div>
+    </div>
+
+    <div class="meals">
+      <h3>하루 구성</h3>
+      <ol>
+        <li><strong>1끼</strong> — 오트밀, 크림 오브 라이스, 유청 분리 단백, 블루베리, 땅콩버터</li>
+        <li><strong>2끼</strong> — 닭가슴살 + 크림 오브 라이스 + 바나나</li>
+        <li><strong>3끼</strong> — 닭가슴살 + 밥 + 김치</li>
+        <li><strong>4끼</strong> — 스테이크 또는 닭 + 밥 + 양파·피망</li>
+        <li><strong>5끼</strong> — 탄수 없는 닭 요리로 마감</li>
+      </ol>
+      <p style="font-size:.85rem; color:var(--ink-3); margin:14px 0 0">고정 3종 세트는 <strong>밥 · 양파 · 피망</strong>. 맛은 거의 포기하고, 소화와 일관성을 택한 구성입니다.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 7. 용어 -->
+<section>
+  <div class="sec-head">
+    <p class="eyebrow">07 — Glossary</p>
+    <h2>용어 뜯어보기</h2>
+    <p>영상에서 계속 나오는 단어들을 어원과 한자로 풀면, 그 방법이 왜 그렇게 생겼는지가 같이 보입니다.</p>
+  </div>
+
+  <div class="gloss">
+    <div class="gl">
+      <div class="term">Mutant · 돌연변이 (突然變異)</div>
+      <div class="roots">라틴어 mūtāre “바꾸다” → mutant “변하는 것”<br>突 갑자기 돌 + 然 그럴 연 + 變 변할 변 + 異 다를 이</div>
+      <p>“갑자기 다르게 변한 것”. 170cm에 130kg대 체중이라는 비정상적 밀도 때문에 붙은 별명입니다.</p>
+    </div>
+    <div class="gl">
+      <div class="term">Hypertrophy · 근비대 (筋肥大)</div>
+      <div class="roots">그리스어 hyper “넘치게” + trophḗ “영양”<br>筋 힘줄 근 + 肥 살찔 비 + 大 클 대</div>
+      <p>근섬유가 “영양이 넘쳐 굵어지는” 것. 개수가 늘어나는 게 아니라 <strong>굵어지는</strong> 쪽이라는 뜻이 단어에 들어 있습니다.</p>
+    </div>
+    <div class="gl">
+      <div class="term">Progressive Overload · 점진적 과부하 (漸進的 過負荷)</div>
+      <div class="roots">漸 점점 점 + 進 나아갈 진 / 過 지날 과 + 負 질 부 + 荷 짐 하</div>
+      <p>“점점 나아가며 감당할 수 있는 것보다 조금 더 짐을 지운다”. 무게만이 아니라 반복수·밀도·가동 범위로도 올립니다.</p>
+    </div>
+    <div class="gl">
+      <div class="term">Rest-Pause · 휴식-정지법</div>
+      <div class="roots">rest(쉬다) + pause(잠깐 멈춤)</div>
+      <p>세트를 끝내는 휴식이 아니라 <strong>세트 안에 끼워 넣는 멈춤</strong>. 15~20초로 인산크레아틴을 일부 회복시켜 같은 무게로 반복을 더 뽑습니다.</p>
+    </div>
+    <div class="gl">
+      <div class="term">TUT · 긴장 지속 시간</div>
+      <div class="roots">Time Under Tension</div>
+      <p>근육이 장력을 받고 있는 총 시간. 닉 워커가 머신과 느린 하강을 택하는 이유가 바로 이 값을 지키기 위해서입니다.</p>
+    </div>
+    <div class="gl">
+      <div class="term">RIR · 여유 반복 수</div>
+      <div class="roots">Reps In Reserve — “예비로 남겨둔 반복”</div>
+      <p>실패까지 몇 개 더 할 수 있었는지. RIR 2 = 2개 남기고 멈춤. 매 세션 실패로 가지 않기 위한 조절 장치입니다.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 8. 적용 -->
+<section>
+  <div class="sec-head">
+    <p class="eyebrow">08 — Apply It</p>
+    <h2>일반인이 가져갈 것과 버릴 것</h2>
+    <p>닉 워커의 프로그램은 10년 경력·프로 회복력·프로 약물 환경 위에 올라가 있습니다. 통째로 복사하는 건 거의 항상 나쁜 선택입니다.</p>
+  </div>
+
+  <div class="take">
+    <div class="take-col keep">
+      <h3>가져갈 것</h3>
+      <ul>
+        <li><strong>머신 활용에 죄책감 갖지 않기.</strong> 세계 톱5 선수가 부상 이후 머신을 주력으로 씁니다.</li>
+        <li><strong>세트 수보다 세트의 질.</strong> 종목당 본세트 2개로 줄이고 그 2개를 제대로 하기.</li>
+        <li><strong>레스트포즈는 마지막 1세트에만.</strong> 종목마다 쓰면 회복이 못 따라옵니다.</li>
+        <li><strong>수축 먼저, 무게 나중.</strong> 가슴은 팔꿈치 각도, 등은 스트레치 구간부터 점검.</li>
+        <li><strong>주말 완전 오프.</strong> 회복도 프로그램의 일부입니다.</li>
+      </ul>
+    </div>
+    <div class="take-col drop">
+      <h3>버릴 것</h3>
+      <ul>
+        <li><strong>매 세트 실패지점.</strong> 본인도 안 합니다. RIR을 남기는 날이 섞여 있습니다.</li>
+        <li><strong>30회 레그프레스 올아웃.</strong> 훈련 경력이 쌓이기 전엔 부상 확률만 올립니다.</li>
+        <li><strong>3,857 kcal 식단.</strong> 체중 130kg 기준 수치입니다. 체중 × 활동량으로 다시 계산하세요.</li>
+        <li><strong>59kg 덤벨 인클라인.</strong> 숫자가 아니라 구조를 따라 하세요.</li>
+      </ul>
+    </div>
+  </div>
+
+  <p class="warn"><strong>참고 —</strong> 이 페이지는 공개된 유튜브 영상과 보도 내용을 정리한 <em>자료</em>이지, 의학적·코칭 조언이 아닙니다. 부상 이력이 있다면 종목 선택 전에 전문가에게 확인하세요.</p>
+</section>
+
+<!-- 9. 출처 -->
+<section class="sources">
+  <p class="eyebrow">Sources</p>
+  <p style="margin-top:8px">2026년 9월 기준, 아래 공개 자료를 교차 확인해 정리했습니다.</p>
+  <ul>
+    <li>Nick Walker 공식 유튜브 채널 — <span class="mono">@NickWalker39</span> (풀 트레이닝 세션 영상)</li>
+    <li>BarBend — 5-day training split / 7-exercise push day / failure vs. reps in reserve / 6 exercises for 3D shoulders / 24-inch arms / full day of eating</li>
+    <li>Fitness Volt — 2026 아놀드 클래식 이후 도리안 예이츠식 분할 공개, 2026 아놀드 프렙 백·레그 세션, 프로필 자료</li>
+    <li>Generation Iron · Hosstile · SET FOR SET — 부위별 세션 리포트</li>
+    <li>Kulturistika.com — 2026 아놀드 클래식 13주 전 등 운동, 3D 어깨 접근법</li>
+  </ul>
+  <p style="margin-top:16px"><strong style="color:var(--ink)">05 고립 · 펌핑 섹션</strong>은 선수 인터뷰가 아니라 아래 연구 문헌을 근거로 했습니다.</p>
+  <ul>
+    <li>Wolf et al. (2025) — 8주 상체 훈련, 늘어난 구간 부분반복 vs 전 가동범위 (PubMed 39959841), 그리고 15개 기관 다중 검증 연구</li>
+    <li>&ldquo;Does longer-muscle length resistance training cause greater longitudinal growth in humans?&rdquo; 체계적 고찰 (2025)</li>
+    <li>&ldquo;Load-induced human skeletal muscle hypertrophy: Mechanisms, myths, and misconceptions&rdquo; (2025) — 기계적 장력 1차 동인, 대사 스트레스·세포 팽창의 인과 근거 부족</li>
+    <li>Schoenfeld et al. (2018, Eur J Sport Sci) — 내적 vs 외적 집중, 팔꿈치 굴근 12.4% / 6.9%, 대퇴사두 차이 없음</li>
+    <li>드롭세트 메타분석 — Sports Medicine Open (2023) 및 후속 체계적 고찰: 비대 차이 없음, 시간은 1/2~1/3</li>
+    <li>BFR 체계적 고찰·메타분석 (2024–2025, Frontiers in Physiology 등) — 저부하 BFR ≈ 고부하 훈련, AOP 기준 개인별 압력 설정 권고</li>
+    <li>&ldquo;Effects of Advanced Resistance Training Systems on Muscle Hypertrophy and Strength&rdquo; 체계적 고찰·메타분석 — 레스트포즈·드롭·클러스터의 기전 구분</li>
+  </ul>
+</section>
+
+</div>
+
+<div id="tip" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+  var tip = document.getElementById('tip');
+  function show(el){
+    var t = el.getAttribute('data-tip'); if(!t) return;
+    tip.textContent = t;
+    var r = el.getBoundingClientRect();
+    tip.style.left = Math.min(Math.max(r.left + r.width/2, 80), window.innerWidth - 80) + 'px';
+    tip.style.top = r.top + 'px';
+    tip.classList.add('on');
+  }
+  function hide(){ tip.classList.remove('on'); }
+  document.querySelectorAll('[data-tip]').forEach(function(el){
+    el.setAttribute('tabindex','0');
+    el.addEventListener('mouseenter', function(){ show(el); });
+    el.addEventListener('mouseleave', hide);
+    el.addEventListener('focus', function(){ show(el); });
+    el.addEventListener('blur', hide);
+  });
+  window.addEventListener('scroll', hide, {passive:true});
+})();
+</script>
